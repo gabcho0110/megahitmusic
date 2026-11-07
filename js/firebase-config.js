@@ -1,7 +1,12 @@
-// Firebase Configuration
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js";
-import { getDatabase, ref, push, set, get, child } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+// ============================================
+// MEGA HIT MUSIC - Firebase bootstrap (ES module)
+// MUST be loaded with <script type="module">
+// ============================================
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAnalytics, isSupported } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
+import {
+    getDatabase, ref, push, set, get, update, remove, child, onValue, off
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyBbIDqR3RHHqQoWdlk-ZXyW2lQr5_FHFrM",
@@ -14,22 +19,24 @@ const firebaseConfig = {
     measurementId: "G-ECT09H4B3R"
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
-let analytics = null;
-try {
-    analytics = getAnalytics(app);
-} catch(e) {
-    console.log("Analytics not available");
-}
-
 const db = getDatabase(app);
 
-// Export for use in other scripts
-window.firebaseApp = app;
-window.firebaseDB = db;
-window.firebaseRef = ref;
-window.firebasePush = push;
-window.firebaseSet = set;
-window.firebaseGet = get;
-window.firebaseChild = child;
+// Analytics is optional and must never break the app
+isSupported().then(ok => {
+    if (ok) {
+        try { getAnalytics(app); } catch (e) { /* ignore */ }
+    }
+}).catch(() => {});
+
+// Single global bridge for the classic scripts
+window.MHM = {
+    app, db,
+    ref, push, set, get, update, remove, child, onValue, off,
+    ready: true
+};
+
+// Notify listeners. Classic scripts run before this module, so they listen
+// for this event; scripts loaded later can simply read window.MHM.
+// Dispatched on window only (a document event would bubble here twice).
+window.dispatchEvent(new CustomEvent('mhm:ready', { detail: window.MHM }));

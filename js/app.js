@@ -1,8 +1,8 @@
 // ============================================
-// MEGA HIT MUSIC - Main Application Logic
+// MEGA HIT MUSIC - Public site logic
 // ============================================
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
 
     // ============================================
     // Navigation
@@ -11,335 +11,373 @@ document.addEventListener('DOMContentLoaded', function() {
     const navMenu = document.getElementById('navMenu');
     const navbar = document.getElementById('navbar');
 
-    navToggle.addEventListener('click', function() {
+    navToggle.addEventListener('click', function () {
         navToggle.classList.toggle('active');
         navMenu.classList.toggle('active');
     });
 
-    // Navbar scroll effect
-    window.addEventListener('scroll', function() {
-        if (window.scrollY > 50) {
-            navbar.classList.add('scrolled');
-        } else {
-            navbar.classList.remove('scrolled');
-        }
+    window.addEventListener('scroll', function () {
+        if (window.scrollY > 50) navbar.classList.add('scrolled');
+        else navbar.classList.remove('scrolled');
     });
 
     // ============================================
-    // Page Navigation System
+    // Page routing
     // ============================================
     function navigateToPage(pageName) {
-        // Hide all pages
-        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-        // Show target page
-        const targetPage = document.getElementById('page-' + pageName);
-        if (targetPage) {
-            targetPage.classList.add('active');
-        }
-        // Update nav links
-        document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-        const activeLink = document.querySelector('[data-page="' + pageName + '"]');
-        if (activeLink) {
-            activeLink.classList.add('active');
-        }
-        // Close mobile menu
+        document.querySelectorAll('.page').forEach(function (p) { p.classList.remove('active'); });
+        const target = document.getElementById('page-' + pageName);
+        if (target) target.classList.add('active');
+
+        document.querySelectorAll('.nav-link').forEach(function (l) { l.classList.remove('active'); });
+        const activeLink = document.querySelector('.nav-link[data-page="' + pageName + '"]');
+        if (activeLink) activeLink.classList.add('active');
+
         navToggle.classList.remove('active');
         navMenu.classList.remove('active');
-        // Scroll to top
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    // Handle all navigation clicks
-    document.addEventListener('click', function(e) {
-        // Page navigation
-        if (e.target.dataset.page) {
+    document.addEventListener('click', function (e) {
+        const pageEl = e.target.closest('[data-page]');
+        if (pageEl) {
             e.preventDefault();
-            navigateToPage(e.target.dataset.page);
+            navigateToPage(pageEl.dataset.page);
+            return;
         }
-        // Event navigation
-        if (e.target.dataset.event) {
+        const eventEl = e.target.closest('[data-event]');
+        if (eventEl) {
             e.preventDefault();
             navigateToPage('events');
-            selectEvent(e.target.dataset.event);
+            selectEvent(eventEl.dataset.event);
         }
     });
 
     // ============================================
-    // Render Artists
+    // Helpers
     // ============================================
-    function renderArtistsPreview() {
+    function esc(str) {
+        return String(str === undefined || str === null ? '' : str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;');
+    }
+
+    function formatDate(dateStr) {
+        const months = ['януари', 'февруари', 'март', 'април', 'май', 'юни',
+            'юли', 'август', 'септември', 'октомври', 'ноември', 'декември'];
+        const d = new Date(dateStr);
+        if (isNaN(d.getTime())) return esc(dateStr || '');
+        return d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
+    }
+
+    // ============================================
+    // Artists
+    // ============================================
+    function renderArtistsPreview(artists) {
         const container = document.getElementById('artistsPreview');
         if (!container) return;
-        container.innerHTML = ARTISTS_DATA.map(artist => `
-            <div class="artist-card" data-artist-id="${artist.id}">
-                <div class="artist-avatar">
-                    <span>${artist.emoji}</span>
-                </div>
-                <div class="artist-info">
-                    <div class="artist-name">${artist.name}</div>
-                    <div class="artist-role">${artist.role}</div>
-                    <p class="artist-bio-short">${artist.shortBio}</p>
-                    <a href="#artists" class="artist-link" data-page="artists">Виж повече &#8594;</a>
-                </div>
-            </div>
-        `).join('');
+        if (!artists.length) {
+            container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🎤</div><p>Все още няма добавени изпълнители.</p></div>';
+            return;
+        }
+        container.innerHTML = artists.map(function (a) {
+            return '' +
+                '<div class="artist-card">' +
+                    '<div class="artist-avatar"><span>' + esc(a.emoji || '🎤') + '</span></div>' +
+                    '<div class="artist-info">' +
+                        '<div class="artist-name">' + esc(a.name) + '</div>' +
+                        '<div class="artist-role">' + esc(a.role || '') + '</div>' +
+                        '<p class="artist-bio-short">' + esc(a.shortBio || '') + '</p>' +
+                        '<a href="#artists" class="artist-link" data-page="artists">Виж повече &#8594;</a>' +
+                    '</div>' +
+                '</div>';
+        }).join('');
     }
 
-    function renderArtistsFull() {
+    function renderArtistsFull(artists) {
         const container = document.getElementById('artistsContainer');
         if (!container) return;
-        container.innerHTML = ARTISTS_DATA.map(artist => `
-            <div class="artist-full" id="${artist.id}">
-                <div class="artist-full-header">
-                    <div class="artist-full-avatar">
-                        <span>${artist.emoji}</span>
-                    </div>
-                    <div class="artist-full-title">
-                        <h2>${artist.name}</h2>
-                        <span class="artist-role-tag">${artist.role}</span>
-                    </div>
-                </div>
-                <div class="artist-full-body">
-                    ${artist.bio.map(p => '<p>' + p + '</p>').join('')}
-                    <h3>Ключови моменти:</h3>
-                    <ul class="artist-highlights">
-                        ${artist.highlights.map(h => '<li>' + h + '</li>').join('')}
-                    </ul>
-                </div>
-            </div>
-        `).join('');
-    }
-
-    // ============================================
-    // Render Singles
-    // ============================================
-    function renderSingles() {
-        const container = document.getElementById('singlesContainer');
-        if (!container) return;
-
-        // Try Firebase first
-        if (window.firebaseDB && window.firebaseGet) {
-            window.firebaseGet(window.firebaseRef(window.firebaseDB, 'singles'))
-                .then(snapshot => {
-                    if (snapshot.exists()) {
-                        const firebaseSingles = Object.values(snapshot.val());
-                        renderSinglesFromData([...firebaseSingles, ...SINGLES_DATA]);
-                    } else {
-                        renderSinglesFromData(SINGLES_DATA);
-                    }
-                })
-                .catch(() => {
-                    renderSinglesFromData(SINGLES_DATA);
-                });
-        } else {
-            renderSinglesFromData(SINGLES_DATA);
+        if (!artists.length) {
+            container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🎤</div><p>Все още няма добавени изпълнители.</p></div>';
+            return;
         }
+        container.innerHTML = artists.map(function (a) {
+            const bio = Array.isArray(a.bio) ? a.bio : (a.bio ? [a.bio] : []);
+            const highlights = Array.isArray(a.highlights) ? a.highlights : (a.highlights ? [a.highlights] : []);
+            return '' +
+                '<div class="artist-full">' +
+                    '<div class="artist-full-header">' +
+                        '<div class="artist-full-avatar"><span>' + esc(a.emoji || '🎤') + '</span></div>' +
+                        '<div class="artist-full-title">' +
+                            '<h2>' + esc(a.name) + '</h2>' +
+                            '<span class="artist-role-tag">' + esc(a.role || '') + '</span>' +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="artist-full-body">' +
+                        bio.map(function (p) { return '<p>' + esc(p) + '</p>'; }).join('') +
+                        (highlights.length
+                            ? '<h3>Ключови моменти:</h3><ul class="artist-highlights">' +
+                              highlights.map(function (h) { return '<li>' + esc(h) + '</li>'; }).join('') +
+                              '</ul>'
+                            : '') +
+                    '</div>' +
+                '</div>';
+        }).join('');
     }
 
-    function renderSinglesFromData(singles) {
+    // ============================================
+    // Singles
+    // ============================================
+    function renderSingles(singles) {
         const container = document.getElementById('singlesContainer');
         if (!container) return;
-        if (singles.length === 0) {
+        if (!singles.length) {
             container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🎵</div><p>Все още няма публикувани сингли.</p></div>';
             return;
         }
-        container.innerHTML = singles.map(single => `
-            <div class="single-card">
-                <div class="single-cover">
-                    <span>${single.emoji || '🎵'}</span>
-                </div>
-                <div class="single-info">
-                    <div class="single-title">${single.title}</div>
-                    <div class="single-artist">${single.artist}</div>
-                    <div class="single-year">${single.year || ''}</div>
-                </div>
-            </div>
-        `).join('');
+        container.innerHTML = singles.map(function (s) {
+            const title = s.link
+                ? '<a href="' + esc(s.link) + '" target="_blank" rel="noopener">' + esc(s.title) + '</a>'
+                : esc(s.title);
+            return '' +
+                '<div class="single-card">' +
+                    '<div class="single-cover"><span>' + esc(s.emoji || '🎵') + '</span></div>' +
+                    '<div class="single-info">' +
+                        '<div class="single-title">' + title + '</div>' +
+                        '<div class="single-artist">' + esc(s.artist || '') + '</div>' +
+                        (s.description ? '<p class="single-desc">' + esc(s.description) + '</p>' : '') +
+                        '<div class="single-year">' + esc(s.year || '') + '</div>' +
+                    '</div>' +
+                '</div>';
+        }).join('');
     }
 
     // ============================================
-    // Render Events
+    // Events
     // ============================================
-    function renderEvents() {
-        Object.keys(EVENTS_DATA).forEach(eventKey => {
-            const container = document.getElementById('event-' + eventKey);
-            if (!container) return;
-            const event = EVENTS_DATA[eventKey];
+    function renderEventsPreview(events) {
+        const container = document.getElementById('eventsPreview');
+        if (!container) return;
+        const list = events.slice(0, 3);
+        if (!list.length) {
+            container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🎪</div><p>Все още няма добавени събития.</p></div>';
+            return;
+        }
+        container.innerHTML = list.map(function (ev) {
+            return '' +
+                '<div class="event-card" data-event="' + esc(ev.id) + '">' +
+                    '<div class="event-card-tag">' + esc(ev.tag || 'Събитие') + '</div>' +
+                    '<div class="event-card-icon">' + esc(ev.emoji || '🎪') + '</div>' +
+                    '<h3>' + esc(ev.title) + '</h3>' +
+                    '<p class="event-card-desc">' + esc(ev.organizers || '') + '</p>' +
+                    '<div class="event-card-date"><span>&#128197;</span> ' + esc(ev.date || '') + '</div>' +
+                    '<a href="#events" class="event-card-link" data-event="' + esc(ev.id) + '">Виж повече &#8594;</a>' +
+                '</div>';
+        }).join('');
+    }
 
+    function renderEventsPage(events) {
+        const tabsEl = document.getElementById('eventTabs');
+        const detailsEl = document.getElementById('eventDetails');
+        if (!tabsEl || !detailsEl) return;
+
+        if (!events.length) {
+            tabsEl.innerHTML = '';
+            detailsEl.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🎪</div><p>Все още няма добавени събития.</p></div>';
+            return;
+        }
+
+        tabsEl.innerHTML = events.map(function (ev, i) {
+            return '<button class="event-tab' + (i === 0 ? ' active' : '') +
+                '" data-event-tab="' + esc(ev.id) + '">' + esc(ev.tabLabel || ev.title) + '</button>';
+        }).join('');
+
+        detailsEl.innerHTML = events.map(function (ev, i) {
             let juryHTML = '';
-            if (eventKey === 'magic-bulgaria' || eventKey === 'magic-folklore') {
-                juryHTML = `
-                    <h3>🧑‍⚖️ Жури</h3>
-                    <div class="jury-grid">
-                        ${JURY_DATA.map(j => `
-                            <div class="jury-card">
-                                <div class="jury-header">
-                                    <div class="jury-avatar">${j.emoji}</div>
-                                    <div>
-                                        <div class="jury-name">${j.name}</div>
-                                        <div class="jury-role">${j.role}</div>
-                                    </div>
-                                </div>
-                                <div class="jury-bio">
-                                    <p>${j.bio}</p>
-                                </div>
-                            </div>
-                        `).join('')}
-                    </div>
-                    <p>📌 Членове на журито не оценяват свои ученици. В такъв случай оценката се удвоява от председателя или друг член.</p>
-                `;
+            if (ev.showJury) {
+                juryHTML = '' +
+                    '<h3>🧑‍⚖️ Жури</h3>' +
+                    '<div class="jury-grid">' +
+                        JURY_DATA.map(function (j) {
+                            return '' +
+                                '<div class="jury-card">' +
+                                    '<div class="jury-header">' +
+                                        '<div class="jury-avatar">' + esc(j.emoji) + '</div>' +
+                                        '<div>' +
+                                            '<div class="jury-name">' + esc(j.name) + '</div>' +
+                                            '<div class="jury-role">' + esc(j.role) + '</div>' +
+                                        '</div>' +
+                                    '</div>' +
+                                    '<div class="jury-bio"><p>' + esc(j.bio) + '</p></div>' +
+                                '</div>';
+                        }).join('') +
+                    '</div>' +
+                    '<p>📌 Членове на журито не оценяват свои ученици. В такъв случай оценката се удвоява от председателя или друг член.</p>';
             }
 
-            container.innerHTML = `
-                <h2>${event.title}</h2>
-                <p><strong>Организатори:</strong> ${event.organizers}</p>
-                ${event.content}
-                ${juryHTML}
-            `;
+            return '' +
+                '<div class="event-detail' + (i === 0 ? ' active' : '') + '" id="event-' + esc(ev.id) + '">' +
+                    '<h2>' + esc(ev.title) + '</h2>' +
+                    (ev.organizers ? '<p><strong>Организатори:</strong> ' + esc(ev.organizers) + '</p>' : '') +
+                    '<div class="event-content">' + (ev.content || '') + '</div>' +
+                    (ev.formLink
+                        ? '<div class="event-cta"><a href="' + esc(ev.formLink) + '" target="_blank" rel="noopener" class="event-form-link">📥 Форма за записване</a></div>'
+                        : '') +
+                    (ev.bankAccount
+                        ? '<div class="bank-info">💳 Банкова сметка: ' + esc(ev.bankAccount) + '</div>'
+                        : '') +
+                    juryHTML +
+                '</div>';
+        }).join('');
+
+        tabsEl.querySelectorAll('.event-tab').forEach(function (tab) {
+            tab.addEventListener('click', function () {
+                selectEvent(this.dataset.eventTab);
+            });
         });
     }
 
-    // Event tab switching
     function selectEvent(eventKey) {
-        document.querySelectorAll('.event-tab').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.event-detail').forEach(d => d.classList.remove('active'));
-        const tab = document.querySelector('[data-event-tab="' + eventKey + '"]');
+        const tabsEl = document.getElementById('eventTabs');
+        if (!tabsEl) return;
+        tabsEl.querySelectorAll('.event-tab').forEach(function (t) { t.classList.remove('active'); });
+        document.querySelectorAll('.event-detail').forEach(function (d) { d.classList.remove('active'); });
+
+        const tab = tabsEl.querySelector('[data-event-tab="' + eventKey + '"]');
         const detail = document.getElementById('event-' + eventKey);
         if (tab) tab.classList.add('active');
         if (detail) detail.classList.add('active');
     }
 
-    document.querySelectorAll('.event-tab').forEach(tab => {
-        tab.addEventListener('click', function() {
-            selectEvent(this.dataset.eventTab);
-        });
-    });
-
     // ============================================
-    // Render News
+    // News
     // ============================================
-    function renderNews() {
+    function renderNews(news) {
         const container = document.getElementById('newsContainer');
         if (!container) return;
-
-        // Try Firebase first
-        if (window.firebaseDB && window.firebaseGet) {
-            window.firebaseGet(window.firebaseRef(window.firebaseDB, 'news'))
-                .then(snapshot => {
-                    if (snapshot.exists()) {
-                        const firebaseNews = Object.values(snapshot.val());
-                        renderNewsFromData([...firebaseNews, ...NEWS_DATA].sort((a, b) => new Date(b.date) - new Date(a.date)));
-                    } else {
-                        renderNewsFromData(NEWS_DATA);
-                    }
-                })
-                .catch(() => {
-                    renderNewsFromData(NEWS_DATA);
-                });
-        } else {
-            renderNewsFromData(NEWS_DATA);
-        }
-    }
-
-    function renderNewsFromData(news) {
-        const container = document.getElementById('newsContainer');
-        if (!container) return;
-        if (news.length === 0) {
+        if (!news.length) {
             container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📰</div><p>Все още няма публикувани новини.</p></div>';
             return;
         }
-        container.innerHTML = news.map(item => `
-            <div class="news-card">
-                <div class="news-image">
-                    <span>${item.emoji || '📰'}</span>
-                </div>
-                <div class="news-content">
-                    <div class="news-date">${formatDate(item.date)}</div>
-                    <div class="news-title">${item.title}</div>
-                    <p class="news-excerpt">${item.excerpt}</p>
-                </div>
-            </div>
-        `).join('');
-    }
-
-    function formatDate(dateStr) {
-        const months = ['януари', 'февруари', 'март', 'април', 'май', 'юни', 'юли', 'август', 'септември', 'октомври', 'ноември', 'декември'];
-        const d = new Date(dateStr);
-        return d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
+        container.innerHTML = news.map(function (item) {
+            const title = item.link
+                ? '<a href="' + esc(item.link) + '" target="_blank" rel="noopener">' + esc(item.title) + '</a>'
+                : esc(item.title);
+            return '' +
+                '<div class="news-card">' +
+                    '<div class="news-image"><span>' + esc(item.emoji || '📰') + '</span></div>' +
+                    '<div class="news-content">' +
+                        '<div class="news-date">' + formatDate(item.date) + '</div>' +
+                        '<div class="news-title">' + title + '</div>' +
+                        '<p class="news-excerpt">' + esc(item.excerpt || '') + '</p>' +
+                    '</div>' +
+                '</div>';
+        }).join('');
     }
 
     // ============================================
-    // Contact Form - Firebase Integration
+    // First paint from static data (instant)
+    // ============================================
+    const staticArtists = ARTISTS_DATA.slice().sort(function (a, b) { return (a.order || 0) - (b.order || 0); });
+    renderArtistsPreview(staticArtists);
+    renderArtistsFull(staticArtists);
+    renderSingles(SINGLES_DATA);
+    renderEventsPreview(EVENTS_DATA);
+    renderEventsPage(EVENTS_DATA);
+    renderNews(NEWS_DATA);
+
+    // ============================================
+    // Then refresh from Firebase
+    // ============================================
+    async function refreshFromDatabase() {
+        if (!window.MHM_STORE || !window.MHM_STORE.hasDB()) return;
+        try {
+            const results = await Promise.all([
+                window.MHM_STORE.getArtists(),
+                window.MHM_STORE.getSingles(),
+                window.MHM_STORE.getEvents(),
+                window.MHM_STORE.getNews()
+            ]);
+            renderArtistsPreview(results[0]);
+            renderArtistsFull(results[0]);
+            renderSingles(results[1]);
+            renderEventsPreview(results[2]);
+            renderEventsPage(results[2]);
+            renderNews(results[3]);
+        } catch (err) {
+            console.warn('Неуспешно зареждане от базата, използвам локални данни.', err);
+        }
+    }
+
+    if (window.MHM) refreshFromDatabase();
+    else window.addEventListener('mhm:ready', refreshFromDatabase, { once: true });
+
+    // ============================================
+    // Contact form
     // ============================================
     const contactForm = document.getElementById('contactForm');
     if (contactForm) {
-        contactForm.addEventListener('submit', function(e) {
+        contactForm.addEventListener('submit', function (e) {
             e.preventDefault();
             const formMessage = document.getElementById('formMessage');
             const formData = {
-                name: document.getElementById('cf-name').value,
-                email: document.getElementById('cf-email').value,
-                phone: document.getElementById('cf-phone').value,
+                name: document.getElementById('cf-name').value.trim(),
+                email: document.getElementById('cf-email').value.trim(),
+                phone: document.getElementById('cf-phone').value.trim(),
                 subject: document.getElementById('cf-subject').value,
-                message: document.getElementById('cf-message').value,
+                message: document.getElementById('cf-message').value.trim(),
+                read: false,
                 timestamp: new Date().toISOString()
             };
 
-            // Show loading
             formMessage.className = 'form-message';
-            formMessage.textContent = 'Изпращане...';
             formMessage.style.display = 'block';
+            formMessage.textContent = 'Изпращане...';
 
-            // Save to Firebase
-            if (window.firebaseDB && window.firebasePush && window.firebaseRef) {
-                const messagesRef = window.firebaseRef(window.firebaseDB, 'messages');
-                window.firebasePush(messagesRef, formData)
-                    .then(() => {
+            if (window.MHM_STORE && window.MHM_STORE.hasDB()) {
+                window.MHM_STORE.addMessage(formData)
+                    .then(function () {
                         formMessage.className = 'form-message success';
                         formMessage.textContent = '✓ Съобщението е изпратено успешно! Ще се свържем с вас скоро.';
                         contactForm.reset();
                     })
-                    .catch(error => {
-                        console.error('Firebase error:', error);
+                    .catch(function (error) {
+                        console.error(error);
                         formMessage.className = 'form-message error';
-                        formMessage.textContent = '✕ Възникна грешка при изпращането. Моля опитайте отново или ни пишете на имейл.';
+                        formMessage.textContent = '✕ Възникна грешка. Моля, пишете ни на office.megahit.music@gmail.com';
                     });
             } else {
-                // Fallback - mailto
                 const subject = encodeURIComponent('Съобщение от ' + formData.name);
                 const body = encodeURIComponent(
                     'Име: ' + formData.name + '\n' +
                     'Имейл: ' + formData.email + '\n' +
-                    'Телефон: ' + formData.phone + '\n' +
-                    'Относно: ' + formData.subject + '\n\n' +
-                    formData.message
+                    'Телефон: ' + formData.phone + '\n\n' + formData.message
                 );
                 window.location.href = 'mailto:office.megahit.music@gmail.com?subject=' + subject + '&body=' + body;
                 formMessage.className = 'form-message success';
                 formMessage.textContent = '✓ Отваряме имейл клиента ви...';
             }
 
-            // Hide message after 5 seconds
-            setTimeout(() => {
-                formMessage.style.display = 'none';
-            }, 5000);
+            setTimeout(function () { formMessage.style.display = 'none'; }, 6000);
         });
     }
 
     // ============================================
-    // Initialize
+    // Deep links
     // ============================================
-    renderArtistsPreview();
-    renderArtistsFull();
-    renderSingles();
-    renderEvents();
-    renderNews();
-
-    // Handle URL hash for direct page access
-    if (window.location.hash) {
-        const hash = window.location.hash.substring(1);
-        if (hash.startsWith('page-')) {
-            navigateToPage(hash.replace('page-', ''));
+    function handleHash() {
+        const hash = (window.location.hash || '').replace('#', '');
+        if (!hash) return;
+        if (hash === 'privacy') { navigateToPage('privacy'); return; }
+        if (hash.indexOf('event-') === 0) {
+            navigateToPage('events');
+            selectEvent(hash.replace('event-', ''));
+            return;
         }
+        if (document.getElementById('page-' + hash)) navigateToPage(hash);
     }
+    handleHash();
+    window.addEventListener('hashchange', handleHash);
 });

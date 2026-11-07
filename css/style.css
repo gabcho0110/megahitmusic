@@ -550,6 +550,8 @@ a {
     position: relative;
     transition: var(--transition);
     cursor: pointer;
+    display: flex;
+    flex-direction: column;
 }
 
 .event-card:hover {
@@ -601,6 +603,7 @@ a {
     font-size: 0.85rem;
     color: var(--accent);
     font-weight: 600;
+    margin-top: auto;
 }
 
 .event-card-link:hover {
@@ -870,6 +873,13 @@ a {
     color: var(--text-muted);
 }
 
+.single-desc {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin: 6px 0 10px;
+}
+
 .empty-state {
     text-align: center;
     padding: 80px 24px;
@@ -906,6 +916,10 @@ a {
     font-weight: 500;
     cursor: pointer;
     transition: var(--transition);
+    max-width: 320px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .event-tab:hover {
@@ -1699,6 +1713,20 @@ a {
 }
 
 .footer-privacy:hover {
+    color: var(--accent);
+}
+
+.footer-bottom-links {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.footer-admin {
+    color: var(--text-muted);
+}
+
+.footer-admin:hover {
     color: var(--accent);
 }
 

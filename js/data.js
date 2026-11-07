@@ -1,5 +1,7 @@
 // ============================================
-// MEGA HIT MUSIC - Static Data
+// MEGA HIT MUSIC - Seed / fallback data
+// Used when Firebase is empty, and as the
+// initial import for the admin panel.
 // ============================================
 
 const ARTISTS_DATA = [
@@ -8,6 +10,7 @@ const ARTISTS_DATA = [
         name: "Радослав Якимов - Радо",
         role: "Основател & Музикален продуцент",
         emoji: "🎤",
+        order: 1,
         shortBio: "Музикален продуцент, изпълнител и основател на лейбъла Mega Hit Music. Обединява поп-фолк и народна музика, подкрепяйки млади независими артисти.",
         bio: [
             "Радослав Якимов, по-известен като Радо, е музикален продуцент, изпълнител и основател на лейбъла \"Мега Хит Мюзик\", който обединява поп-фолк и народна музика. Той подкрепя млади, независими артисти и работи по различни музикални проекти.",
@@ -27,6 +30,7 @@ const ARTISTS_DATA = [
         name: "Любен Бойчев - Leon",
         role: "Изпълнител & Композитор",
         emoji: "🎵",
+        order: 2,
         shortBio: "Български изпълнител, композитор и музикант. Авторски песни и кавъри на известни хитове. Няма невъзможни неща.",
         bio: [
             "Любен Бойчев, по-известен със сценичното име Леон, е български изпълнител, композитор и музикант, който се изявява в различни жанрове и музикални стилове. Той е активен на българската музикална сцена и има зад гърба си няколко успешни проекта и издания. Неговият репертоар включва както авторски песни, така и кавъри на известни български и чуждестранни хитове.",
@@ -46,6 +50,7 @@ const ARTISTS_DATA = [
         name: "Виктор Илиев - VIKSATA KING",
         role: "Изпълнител",
         emoji: "🎸",
+        order: 3,
         shortBio: "Талантлив музикант от гр. Русе, възпитаник на Националното училище по изкуствата. Класическа китара. Дебют с кавър на \"Когато те няма\".",
         bio: [
             "Виктор Илиев, по-известен като Виксата, е изпълнител на MEGA HIT MUSIC!",
@@ -64,27 +69,40 @@ const ARTISTS_DATA = [
 
 const SINGLES_DATA = [
     {
+        id: "siten-dazhd",
         title: "Ситен дъжд",
         artist: "Любен Бойчев - Leon",
         year: "2025",
         emoji: "🌧️",
-        description: "Кавър на песента на Живка Папанчева. Видеоклипът е заснет в Стария град на Пловдив."
+        link: "",
+        description: "Кавър на песента на Живка Папанчева. Видеоклипът е заснет в Стария град на Пловдив.",
+        order: 1
     },
     {
+        id: "kogato-te-nyama",
         title: "Когато те няма",
         artist: "Виктор Илиев - VIKSATA KING",
         year: "2025",
         emoji: "🎤",
-        description: "Дебютен сингъл - кавър. Уникално изпълнение от Виксата Кинг."
+        link: "",
+        description: "Дебютен сингъл - кавър. Уникално изпълнение от Виксата Кинг.",
+        order: 2
     }
 ];
 
-const EVENTS_DATA = {
-    "magic-bulgaria": {
+const EVENTS_DATA = [
+    {
+        id: "magic-bulgaria",
+        tabLabel: "Магията на България",
         title: "III Национален музикален онлайн конкурс за изкуства: \"Магията на България\" 2026 г.",
+        tag: "Конкурс",
+        emoji: "🏆",
+        date: "22.07.2026",
         organizers: "MEGA HIT MUSIC и RY MUSIC",
         formLink: "https://forms.gle/Wh9Wnzx7kQNrYo2B7",
-        bankAccount: "BG79FINV91501017726681 - Радослав Якимов",
+        bankAccount: "BG79FINV91501017726681 – Радослав Якимов",
+        showJury: true,
+        order: 1,
         content: `
             <div class="event-box">
                 <div class="event-box-title">🎯 Цел на конкурса</div>
@@ -152,30 +170,12 @@ const EVENTS_DATA = {
 
             <h3>💰 Такси за участие</h3>
             <div class="event-pricing">
-                <div class="price-item">
-                    <div class="price-amount">10 &euro;</div>
-                    <div class="price-label">Солист (Стандарт)</div>
-                </div>
-                <div class="price-item">
-                    <div class="price-amount">30 &euro;</div>
-                    <div class="price-label">Ансамбъл (Стандарт)</div>
-                </div>
-                <div class="price-item">
-                    <div class="price-amount">20 &euro;</div>
-                    <div class="price-label">Солист (Разширено)</div>
-                </div>
-                <div class="price-item">
-                    <div class="price-amount">40 &euro;</div>
-                    <div class="price-label">Ансамбъл (Разширено)</div>
-                </div>
-                <div class="price-item">
-                    <div class="price-amount">30 &euro;</div>
-                    <div class="price-label">Солист (Звездно)</div>
-                </div>
-                <div class="price-item">
-                    <div class="price-amount">60 &euro;</div>
-                    <div class="price-label">Ансамбъл (Звездно)</div>
-                </div>
+                <div class="price-item"><div class="price-amount">10 &euro;</div><div class="price-label">Солист (Стандарт)</div></div>
+                <div class="price-item"><div class="price-amount">30 &euro;</div><div class="price-label">Ансамбъл (Стандарт)</div></div>
+                <div class="price-item"><div class="price-amount">20 &euro;</div><div class="price-label">Солист (Разширено)</div></div>
+                <div class="price-item"><div class="price-amount">40 &euro;</div><div class="price-label">Ансамбъл (Разширено)</div></div>
+                <div class="price-item"><div class="price-amount">30 &euro;</div><div class="price-label">Солист (Звездно)</div></div>
+                <div class="price-item"><div class="price-amount">60 &euro;</div><div class="price-label">Ансамбъл (Звездно)</div></div>
             </div>
 
             <h3>🏆 Награди</h3>
@@ -203,7 +203,7 @@ const EVENTS_DATA = {
             </div>
 
             <div class="event-cta">
-                <a href="https://forms.gle/Wh9Wnzx7kQNrYo2B7" target="_blank" class="event-form-link">📥 Форма за записване</a>
+                <a href="https://forms.gle/Wh9Wnzx7kQNrYo2B7" target="_blank" rel="noopener" class="event-form-link">📥 Форма за записване</a>
             </div>
 
             <div class="bank-info">
@@ -218,11 +218,18 @@ const EVENTS_DATA = {
             </ul>
         `
     },
-    "magic-folklore": {
+    {
+        id: "magic-folklore",
+        tabLabel: "Магията на фолклора",
         title: "II Национален фестивал за български фолклор \"Магията на фолклора\" 2026 г.",
+        tag: "Фестивал",
+        emoji: "🎭",
+        date: "01.11.2026",
         organizers: "MEGA HIT MUSIC и RY MUSIC",
         formLink: "",
-        bankAccount: "BG79FINV91501017726681 - Radoslav Yakimov",
+        bankAccount: "BG79FINV91501017726681 – Radoslav Yakimov",
+        showJury: true,
+        order: 2,
         content: `
             <div class="event-box">
                 <div class="event-box-title">🎯 Цел на фестивала</div>
@@ -266,26 +273,11 @@ const EVENTS_DATA = {
 
             <h3>💰 Такси за участие</h3>
             <div class="event-pricing">
-                <div class="price-item">
-                    <div class="price-amount">92 &euro;</div>
-                    <div class="price-label">Ансамбли (над 5 човека)</div>
-                </div>
-                <div class="price-item">
-                    <div class="price-amount">36 &euro;</div>
-                    <div class="price-label">Малки групи (Дует, Трио, Квартет)</div>
-                </div>
-                <div class="price-item">
-                    <div class="price-amount">20 &euro;</div>
-                    <div class="price-label">Солисти</div>
-                </div>
-                <div class="price-item">
-                    <div class="price-amount">8 &euro;</div>
-                    <div class="price-label">Обработка на документи</div>
-                </div>
-                <div class="price-item">
-                    <div class="price-amount">10 &euro;</div>
-                    <div class="price-label">Допълнителен коментар от журито</div>
-                </div>
+                <div class="price-item"><div class="price-amount">92 &euro;</div><div class="price-label">Ансамбли (над 5 човека)</div></div>
+                <div class="price-item"><div class="price-amount">36 &euro;</div><div class="price-label">Малки групи (Дуо/Трио/Квартет)</div></div>
+                <div class="price-item"><div class="price-amount">20 &euro;</div><div class="price-label">Солисти</div></div>
+                <div class="price-item"><div class="price-amount">8 &euro;</div><div class="price-label">Обработка на документи</div></div>
+                <div class="price-item"><div class="price-amount">10 &euro;</div><div class="price-label">Коментар от журито</div></div>
             </div>
             <p>📌 Платената такса не се възстановява. С плащането участниците декларират, че са запознати и приемат настоящите условия.</p>
 
@@ -322,11 +314,18 @@ const EVENTS_DATA = {
             <p>🛑 Конкурсът си запазва правото на промени по организацията.</p>
         `
     },
-    "easter-parade": {
+    {
+        id: "easter-parade",
+        tabLabel: "Великденски парад",
         title: "II Национален фестивал \"Велик Великденски парад на талантите\" – 2025 г.",
+        tag: "Фестивал",
+        emoji: "🐣",
+        date: "20.04.2025",
         organizers: "MEGA HIT MUSIC",
         formLink: "https://forms.gle/nihvdNbvzFNu13bp7",
         bankAccount: "BG79FINV91501017726681",
+        showJury: false,
+        order: 3,
         content: `
             <div class="event-box">
                 <div class="event-box-title">🌸 За фестивала</div>
@@ -334,7 +333,6 @@ const EVENTS_DATA = {
             </div>
 
             <h3>👥 Участници</h3>
-            <p>Фестивалът е отворен за всички талантливи творци в следните категории:</p>
             <ul>
                 <li>Певци / Групи / Хорове</li>
                 <li>Инструменталисти / Ансамбли / Оркестри</li>
@@ -382,26 +380,11 @@ const EVENTS_DATA = {
 
             <h3>💰 Такси за участие</h3>
             <div class="event-pricing">
-                <div class="price-item">
-                    <div class="price-amount">30 лв.</div>
-                    <div class="price-label">Индивидуални (соло)</div>
-                </div>
-                <div class="price-item">
-                    <div class="price-amount">60 лв.</div>
-                    <div class="price-label">Ансамбли и хорове (6-15)</div>
-                </div>
-                <div class="price-item">
-                    <div class="price-amount">80 лв.</div>
-                    <div class="price-label">Големи формации (над 15)</div>
-                </div>
-                <div class="price-item">
-                    <div class="price-amount">15 лв.</div>
-                    <div class="price-label">Допълнително изпълнение</div>
-                </div>
-                <div class="price-item">
-                    <div class="price-amount">10 лв.</div>
-                    <div class="price-label">Обработка на документи</div>
-                </div>
+                <div class="price-item"><div class="price-amount">30 лв.</div><div class="price-label">Индивидуални (соло)</div></div>
+                <div class="price-item"><div class="price-amount">60 лв.</div><div class="price-label">Ансамбли и хорове (6-15)</div></div>
+                <div class="price-item"><div class="price-amount">80 лв.</div><div class="price-label">Големи формации (над 15)</div></div>
+                <div class="price-item"><div class="price-amount">15 лв.</div><div class="price-label">Допълнително изпълнение</div></div>
+                <div class="price-item"><div class="price-amount">10 лв.</div><div class="price-label">Обработка на документи</div></div>
             </div>
             <p>📌 Всички участници, допуснати до втория етап, получават диплом, медал и подарък!</p>
 
@@ -427,7 +410,7 @@ const EVENTS_DATA = {
             </ul>
 
             <div class="event-cta">
-                <a href="https://forms.gle/nihvdNbvzFNu13bp7" target="_blank" class="event-form-link">📥 Форма за участие</a>
+                <a href="https://forms.gle/nihvdNbvzFNu13bp7" target="_blank" rel="noopener" class="event-form-link">📥 Форма за участие</a>
             </div>
 
             <div class="bank-info">
@@ -435,11 +418,18 @@ const EVENTS_DATA = {
             </div>
         `
     },
-    "christmas-magic": {
+    {
+        id: "christmas-magic",
+        tabLabel: "Коледна магия",
         title: "Международен коледен онлайн конкурс „Коледна магия на таланта“ – 2025",
+        tag: "Конкурс",
+        emoji: "🎄",
+        date: "28.12.2025",
         organizers: "MEGA HIT MUSIC",
         formLink: "",
         bankAccount: "BG79FINV91501017726681",
+        showJury: false,
+        order: 4,
         content: `
             <div class="event-box" style="text-align:center; padding: 48px;">
                 <div style="font-size: 3rem; margin-bottom: 16px;">🎄</div>
@@ -468,9 +458,9 @@ const EVENTS_DATA = {
             <p style="text-align: center; margin-top: 24px;">🎭 Очакваме ви с нетърпение! Покажете своя талант в нашия коледен празник на изкуствата! 🎨🎶💃</p>
         `
     }
-};
+];
 
-// Jury data for events
+// Jury data (shared by events with showJury = true)
 const JURY_DATA = [
     {
         name: "Радослав Якимов",
@@ -498,29 +488,36 @@ const JURY_DATA = [
     }
 ];
 
-// News data (will also try to fetch from Firebase)
 const NEWS_DATA = [
     {
+        id: "magic-bulgaria-2026",
         title: "III Национален конкурс \"Магията на България\" 2026",
         date: "2026-01-15",
         emoji: "🏆",
-        excerpt: "Отворено записване за третото издание на националния музикален онлайн конкурс. Краен срок: 21.07.2026 г."
+        link: "",
+        excerpt: "Отворено записване за третото издание на националния музикален онлайн конкурс. Краен срок: 21.07.2026 г.",
+        order: 1
     },
     {
+        id: "magic-folklore-2026",
         title: "II Фестивал \"Магията на фолклора\" 2026",
         date: "2026-01-10",
         emoji: "🎭",
-        excerpt: "Подготвяме второто издание на фестивала за български фолклор. Записване до 26.10.2026 г."
+        link: "",
+        excerpt: "Подготвяме второто издание на фестивала за български фолклор. Записване до 26.10.2026 г.",
+        order: 2
     },
     {
+        id: "viksata-debut",
         title: "Дебют на Виксата Кинг",
         date: "2025-06-01",
         emoji: "🎸",
-        excerpt: "Виксата Кинг стартира с дебютен сингъл - кавър на \"Когато те няма\". Вече достъпен!"
+        link: "",
+        excerpt: "Виксата Кинг стартира с дебютен сингъл - кавър на \"Когато те няма\". Вече достъпен!",
+        order: 3
     }
 ];
 
-// Contact info
 const CONTACT_INFO = {
     phones: ["0892 741 651", "0896 377 726"],
     emails: ["office.megahit.music@gmail.com", "radoslav.iakimov.music@gmail.com"],
@@ -528,18 +525,15 @@ const CONTACT_INFO = {
         { name: "Радослав Якимов", role: "PR Manager и Музикален продуцент" },
         { name: "Стефан Георгиев", role: "Изпълнителен продуцент" }
     ],
-    workHours: {
-        "Понеделник": "14:30 - 21:00",
-        "Вторник": "14:30 - 18:00 / 20:00 - 21:00",
-        "Сряда": "13:30 - 21:00",
-        "Четвъртък": "14:30 - 18:00 / 20:00 - 21:00",
-        "Петък": "13:30 - 16:30 / 18:30 - 21:00",
-        "Събота": "13:00 - 22:00",
-        "Неделя": "14:00 - 20:00"
-    },
     bankAccount: "BG79FINV91501017726681",
-    socialMedia: {
-        facebook: "777.r.yakimov777",
-        instagram: "777.r.yakimov777"
-    }
+    socialMedia: { facebook: "777.r.yakimov777", instagram: "777.r.yakimov777" }
+};
+
+// Default admin account - created automatically on first login
+// if the users list is still empty. Password is stored only as a hash.
+const DEFAULT_ADMIN = {
+    username: "alex4o",
+    password: "Aleks2010$",
+    displayName: "Алекс Тодоров",
+    role: "admin"
 };
