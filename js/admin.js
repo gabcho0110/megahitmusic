@@ -36,7 +36,10 @@
             events: [],
             news: [],
             messages: [],
-            users: []
+            users: [],
+            academySettings: {},
+            academyCourses: [],
+            academyPlans: []
         },
         loading: false
     };
@@ -219,8 +222,50 @@
                 ] },
                 { key: 'password', label: 'Парола', type: 'password', span: 2 }
             ]
+        },
+        academyCourses: {
+            singular: 'дисциплина',
+            plural: 'дисциплини',
+            titleField: 'title',
+            fields: [
+                { key: 'title', label: 'Име на дисциплината', type: 'text', required: true, span: 2 },
+                { key: 'emoji', label: 'Емоджи', type: 'text', hint: 'напр. 🎤' },
+                { key: 'order', label: 'Подредба', type: 'number' },
+                { key: 'description', label: 'Описание', type: 'textarea', rows: 3, span: 2 },
+                { key: 'age', label: 'Възраст', type: 'text', hint: 'напр. от 5 г.' },
+                { key: 'duration', label: 'Продължителност', type: 'text', hint: 'напр. 45 мин' }
+            ]
+        },
+        academyPlans: {
+            singular: 'ценово ниво',
+            plural: 'ценови нива',
+            titleField: 'name',
+            fields: [
+                { key: 'name', label: 'Име на нивото', type: 'text', required: true, span: 2 },
+                { key: 'price', label: 'Цена', type: 'text', required: true, hint: 'напр. 60 €' },
+                { key: 'period', label: 'Период', type: 'text', hint: 'напр. на месец' },
+                { key: 'badge', label: 'Етикет', type: 'text', hint: 'напр. Препоръчваме (по избор)' },
+                { key: 'order', label: 'Подредба', type: 'number' },
+                { key: 'featured', label: 'Откроявай това ниво', type: 'checkbox', span: 2 },
+                { key: 'description', label: 'Кратко описание', type: 'textarea', rows: 2, span: 2 },
+                { key: 'features', label: 'Какво включва', type: 'lines', rows: 5, span: 2, hint: 'Всяка точка на нов ред' }
+            ]
         }
     };
+
+    // Academy settings are edited in an inline form (not a modal)
+    const ACADEMY_SETTINGS_FIELDS = [
+        { key: 'emoji', label: 'Емоджи', type: 'text' },
+        { key: 'title', label: 'Заглавие', type: 'text', required: true },
+        { key: 'subtitle', label: 'Подзаглавие', type: 'text', span: 2 },
+        { key: 'intro', label: 'Въведение', type: 'textarea', rows: 3, span: 2 },
+        { key: 'description', label: 'Блок „Какво включва обучението“ (HTML)', type: 'html', rows: 8, span: 2 },
+        { key: 'ctaTitle', label: 'Заглавие на призива', type: 'text' },
+        { key: 'ctaText', label: 'Текст на призива', type: 'text' },
+        { key: 'note', label: 'Бележка под цените', type: 'textarea', rows: 2, span: 2 },
+        { key: 'phone', label: 'Телефон', type: 'text' },
+        { key: 'email', label: 'Имейл', type: 'text' }
+    ];
 
     // ============================================
     // Form building
@@ -445,13 +490,17 @@
         state.loading = true;
         const S = window.MHM_STORE;
         const results = await Promise.all([
-            S.getArtists(), S.getSingles(), S.getEvents(), S.getNews(), S.getMessages()
+            S.getArtists(), S.getSingles(), S.getEvents(), S.getNews(), S.getMessages(),
+            S.getAcademySettings(), S.getAcademyCourses(), S.getAcademyPlans()
         ]);
         state.data.artists = results[0] || [];
         state.data.singles = results[1] || [];
         state.data.events = results[2] || [];
         state.data.news = results[3] || [];
         state.data.messages = results[4] || [];
+        state.data.academySettings = results[5] || {};
+        state.data.academyCourses = results[6] || [];
+        state.data.academyPlans = results[7] || [];
 
         if (isAdmin()) {
             try {
@@ -486,7 +535,10 @@
         news: 'Новини',
         messages: 'Съобщения',
         users: 'Потребители',
-        account: 'Моят профил'
+        account: 'Моят профил',
+        academySettings: 'Академия — настройки',
+        academyCourses: 'Академия — дисциплини',
+        academyPlans: 'Академия — цени'
     };
 
     function setPanel(name) {
@@ -514,6 +566,9 @@
             case 'messages': renderMessages(); break;
             case 'users': renderUsers(); break;
             case 'account': renderAccount(); break;
+            case 'academySettings': renderAcademySettings(); break;
+            case 'academyCourses': renderList('academyCourses'); break;
+            case 'academyPlans': renderList('academyPlans'); break;
             default: renderDashboard();
         }
     }
@@ -540,6 +595,7 @@
                 statCard('🎵', d.singles.length, 'Сингли') +
                 statCard('🎪', d.events.length, 'Събития') +
                 statCard('📰', d.news.length, 'Новини') +
+                statCard('🎓', d.academyCourses.length, 'Дисциплини') +
                 statCard('✉️', unread, 'Непрочетени') +
             '</div>' +
 
@@ -600,6 +656,25 @@
                 { label: '', render: function (i) { return '<span class="cell-emoji">' + esc(i.emoji || '📰') + '</span>'; } },
                 { label: 'Заглавие', render: function (i) { return '<span class="cell-title">' + esc(truncate(i.title, 60)) + '</span>'; } },
                 { label: 'Дата', render: function (i) { return '<span class="cell-muted">' + esc(i.date || '—') + '</span>'; } }
+            ]
+        },
+        academyCourses: {
+            columns: [
+                { label: '', render: function (i) { return '<span class="cell-emoji">' + esc(i.emoji || '🎵') + '</span>'; } },
+                { label: 'Дисциплина', render: function (i) { return '<span class="cell-title">' + esc(i.title) + '</span>'; } },
+                { label: 'Възраст', render: function (i) { return '<span class="cell-muted">' + esc(i.age || '—') + '</span>'; }, hideMobile: true },
+                { label: 'Времетраене', render: function (i) { return '<span class="cell-muted">' + esc(i.duration || '—') + '</span>'; }, hideMobile: true }
+            ]
+        },
+        academyPlans: {
+            columns: [
+                { label: 'Ниво', render: function (i) { return '<span class="cell-title">' + esc(i.name) + '</span>' + (i.featured ? ' <span class="msg-subject">активно</span>' : ''); } },
+                { label: 'Цена', render: function (i) { return '<span class="cell-title" style="color:var(--accent)">' + esc(i.price || '—') + '</span>'; } },
+                { label: 'Период', render: function (i) { return '<span class="cell-muted">' + esc(i.period || '—') + '</span>'; }, hideMobile: true },
+                { label: 'Точки', render: function (i) {
+                    const n = Array.isArray(i.features) ? i.features.length : 0;
+                    return '<span class="cell-muted">' + n + '</span>';
+                }, hideMobile: true }
             ]
         }
     };
@@ -810,6 +885,74 @@
                 const user = users.find(function (u) { return u.id === btn.dataset.deluser; });
                 if (user) removeUser(user.id, user.displayName || user.username);
             });
+        });
+    }
+
+    // ---------- academy settings ----------
+    function renderAcademySettings() {
+        const s = state.data.academySettings || {};
+
+        const fieldsHTML = ACADEMY_SETTINGS_FIELDS.map(function (f) {
+            return renderField(f, s[f.key]);
+        }).join('');
+
+        panelContent.innerHTML = '' +
+            '<div class="panel-head">' +
+                '<div>' +
+                    '<h2>Академия — настройки</h2>' +
+                    '<p>Заглавие, въведение и текстове на страницата.</p>' +
+                '</div>' +
+                '<div class="panel-actions">' +
+                    '<a href="index.html#academy" target="_blank" rel="noopener" class="btn btn-outline">Виж страницата</a>' +
+                '</div>' +
+            '</div>' +
+            '<div class="data-card" style="padding:24px;max-width:820px">' +
+                '<form id="academySettingsForm" class="form-grid" autocomplete="off">' +
+                    fieldsHTML +
+                    '<div class="form-error" id="academySettingsError" hidden></div>' +
+                    '<div class="span-2" style="display:flex;gap:10px;margin-top:8px">' +
+                        '<button type="submit" class="btn btn-primary">Запази промените</button>' +
+                        '<button type="button" class="btn btn-outline" id="academySettingsReset">Отмени</button>' +
+                    '</div>' +
+                '</form>' +
+            '</div>';
+
+        const form = document.getElementById('academySettingsForm');
+        const errorBox = document.getElementById('academySettingsError');
+
+        document.getElementById('academySettingsReset').addEventListener('click', function () {
+            renderAcademySettings();
+        });
+
+        form.addEventListener('submit', async function (e) {
+            e.preventDefault();
+            errorBox.hidden = true;
+
+            let data;
+            try {
+                data = collectForm(form, ACADEMY_SETTINGS_FIELDS, 'academySettings', true);
+            } catch (err) {
+                errorBox.hidden = false;
+                errorBox.textContent = err.message;
+                return;
+            }
+
+            const btn = form.querySelector('button[type="submit"]');
+            const original = btn.textContent;
+            btn.disabled = true;
+            btn.textContent = 'Запазване...';
+
+            try {
+                await window.MHM_STORE.saveAcademySettings(data);
+                state.data.academySettings = Object.assign({}, s, data);
+                toast('Настройките са запазени.');
+                renderAcademySettings();
+            } catch (err) {
+                errorBox.hidden = false;
+                errorBox.textContent = err.message || 'Грешка при запазване.';
+                btn.disabled = false;
+                btn.textContent = original;
+            }
         });
     }
 

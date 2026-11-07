@@ -12,8 +12,12 @@ const MHM_STORE = (function () {
         singles: 'singles',
         events: 'events',
         news: 'news',
-        messages: 'messages'
+        messages: 'messages',
+        academyCourses: 'academy/courses',
+        academyPlans: 'academy/plans'
     };
+
+    const ACADEMY_SETTINGS_PATH = 'academy/settings';
 
     function sdk() {
         return window.MHM || null;
@@ -154,6 +158,38 @@ const MHM_STORE = (function () {
         return deleteItem('messages', id);
     }
 
+    // ---------- academy ----------
+    async function getAcademySettings() {
+        const s = sdk();
+        if (!s) return Object.assign({}, ACADEMY_SETTINGS);
+        try {
+            const snap = await s.get(s.ref(s.db, ACADEMY_SETTINGS_PATH));
+            if (!snap.exists()) return Object.assign({}, ACADEMY_SETTINGS);
+            return Object.assign({}, ACADEMY_SETTINGS, snap.val());
+        } catch (err) {
+            console.warn('[MHM_STORE] academy settings failed', err);
+            return Object.assign({}, ACADEMY_SETTINGS);
+        }
+    }
+
+    async function saveAcademySettings(data) {
+        const s = sdk();
+        if (!s) throw new Error('Firebase не е наличен');
+        await s.set(s.ref(s.db, ACADEMY_SETTINGS_PATH), data);
+    }
+
+    async function getAcademyCourses() {
+        const remote = await readCollection('academyCourses');
+        if (remote && remote.length) return remote.slice().sort(byOrder);
+        return ACADEMY_COURSES.slice().sort(byOrder);
+    }
+
+    async function getAcademyPlans() {
+        const remote = await readCollection('academyPlans');
+        if (remote && remote.length) return remote.slice().sort(byOrder);
+        return ACADEMY_PLANS.slice().sort(byOrder);
+    }
+
     // ---------- seeding ----------
     async function seedCollection(name, items) {
         const existing = await readCollection(name);
@@ -168,12 +204,29 @@ const MHM_STORE = (function () {
         return true;
     }
 
+    async function seedAcademySettings() {
+        const s = sdk();
+        if (!s) return false;
+        try {
+            const snap = await s.get(s.ref(s.db, ACADEMY_SETTINGS_PATH));
+            if (snap.exists()) return false;
+            await s.set(s.ref(s.db, ACADEMY_SETTINGS_PATH), ACADEMY_SETTINGS);
+            return true;
+        } catch (err) {
+            console.warn('[MHM_STORE] seed settings failed', err);
+            return false;
+        }
+    }
+
     async function seedAll() {
         const result = {};
         result.artists = await seedCollection('artists', ARTISTS_DATA);
         result.singles = await seedCollection('singles', SINGLES_DATA);
         result.events = await seedCollection('events', EVENTS_DATA);
         result.news = await seedCollection('news', NEWS_DATA);
+        result.academyCourses = await seedCollection('academyCourses', ACADEMY_COURSES);
+        result.academyPlans = await seedCollection('academyPlans', ACADEMY_PLANS);
+        result.academySettings = await seedAcademySettings();
         return result;
     }
 
@@ -188,6 +241,10 @@ const MHM_STORE = (function () {
         addMessage: addMessage,
         markMessageRead: markMessageRead,
         deleteMessage: deleteMessage,
+        getAcademySettings: getAcademySettings,
+        saveAcademySettings: saveAcademySettings,
+        getAcademyCourses: getAcademyCourses,
+        getAcademyPlans: getAcademyPlans,
         createItem: createItem,
         writeItem: writeItem,
         deleteItem: deleteItem,

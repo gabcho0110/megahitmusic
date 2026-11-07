@@ -39,6 +39,13 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     document.addEventListener('click', function (e) {
+        const academyEl = e.target.closest('[data-academy-tab]');
+        if (academyEl) {
+            e.preventDefault();
+            navigateToPage('academy');
+            setAcademyTab(academyEl.dataset.academyTab);
+            return;
+        }
         const pageEl = e.target.closest('[data-page]');
         if (pageEl) {
             e.preventDefault();
@@ -278,6 +285,107 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // ============================================
+    // Academy
+    // ============================================
+    function renderAcademy(settings, courses, plans) {
+        const s = settings || {};
+
+        const set = function (id, value) {
+            const el = document.getElementById(id);
+            if (el) el.textContent = value || '';
+        };
+
+        set('academyTitle', s.title);
+        set('academySubtitle', s.subtitle);
+        set('academyIntro', s.intro);
+        set('academyCtaTitle', s.ctaTitle);
+        set('academyCtaText', s.ctaText);
+        set('academyNote', s.note);
+
+        const emojiEl = document.getElementById('academyEmoji');
+        if (emojiEl) emojiEl.textContent = s.emoji || '🎓';
+
+        const descEl = document.getElementById('academyDescription');
+        if (descEl) descEl.innerHTML = s.description || '';
+
+        const phoneEl = document.getElementById('academyPhone');
+        if (phoneEl && s.phone) {
+            phoneEl.textContent = s.phone;
+            phoneEl.href = 'tel:' + String(s.phone).replace(/[^0-9+]/g, '');
+        }
+        const emailEl = document.getElementById('academyEmail');
+        if (emailEl && s.email) {
+            emailEl.textContent = s.email;
+            emailEl.href = 'mailto:' + s.email;
+        }
+
+        const coursesEl = document.getElementById('academyCourses');
+        if (coursesEl) {
+            if (!courses || !courses.length) {
+                coursesEl.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🎓</div><p>Все още няма добавени дисциплини.</p></div>';
+            } else {
+                coursesEl.innerHTML = courses.map(function (c) {
+                    return '' +
+                        '<div class="course-card">' +
+                            '<div class="course-emoji">' + esc(c.emoji || '🎵') + '</div>' +
+                            '<div class="course-title">' + esc(c.title) + '</div>' +
+                            '<p class="course-desc">' + esc(c.description || '') + '</p>' +
+                            '<div class="course-meta">' +
+                                (c.age ? '<span class="course-tag">' + esc(c.age) + '</span>' : '') +
+                                (c.duration ? '<span class="course-tag">' + esc(c.duration) + '</span>' : '') +
+                            '</div>' +
+                        '</div>';
+                }).join('');
+            }
+        }
+
+        const plansEl = document.getElementById('academyPlans');
+        if (plansEl) {
+            if (!plans || !plans.length) {
+                plansEl.innerHTML = '<div class="empty-state"><div class="empty-state-icon">💳</div><p>Все още няма добавени цени.</p></div>';
+            } else {
+                plansEl.innerHTML = plans.map(function (p) {
+                    const features = Array.isArray(p.features) ? p.features : (p.features ? [p.features] : []);
+                    return '' +
+                        '<div class="pricing-card' + (p.featured ? ' pricing-featured' : '') + '">' +
+                            (p.badge ? '<div class="pricing-badge">' + esc(p.badge) + '</div>' : '') +
+                            '<div class="pricing-header">' +
+                                '<h3>' + esc(p.name) + '</h3>' +
+                                '<div class="pricing-price">' + esc(p.price || '') + '</div>' +
+                                (p.period ? '<div class="pricing-period">' + esc(p.period) + '</div>' : '') +
+                            '</div>' +
+                            (p.description ? '<p class="pricing-desc">' + esc(p.description) + '</p>' : '') +
+                            '<ul class="pricing-features">' +
+                                features.map(function (f) { return '<li>' + esc(f) + '</li>'; }).join('') +
+                            '</ul>' +
+                            '<a href="#contact" class="btn ' + (p.featured ? 'btn-primary' : 'btn-outline') +
+                                '" data-page="contact">Запиши се</a>' +
+                        '</div>';
+                }).join('');
+            }
+        }
+    }
+
+    function setAcademyTab(tab) {
+        const name = tab === 'prices' ? 'prices' : 'home';
+        document.querySelectorAll('.academy-tab').forEach(function (b) {
+            b.classList.toggle('active', b.dataset.academyTab === name);
+        });
+        document.querySelectorAll('.academy-view').forEach(function (v) {
+            v.classList.remove('active');
+        });
+        const view = document.getElementById('academy-' + name);
+        if (view) view.classList.add('active');
+
+        const crumb = document.getElementById('academyCrumb');
+        if (crumb) crumb.textContent = name === 'prices' ? 'Цени' : 'Начална страница';
+
+        if (window.history && window.history.replaceState) {
+            history.replaceState(null, '', name === 'prices' ? '#academy-prices' : '#academy');
+        }
+    }
+
+    // ============================================
     // First paint from static data (instant)
     // ============================================
     const staticArtists = ARTISTS_DATA.slice().sort(function (a, b) { return (a.order || 0) - (b.order || 0); });
@@ -287,6 +395,7 @@ document.addEventListener('DOMContentLoaded', function () {
     renderEventsPreview(EVENTS_DATA);
     renderEventsPage(EVENTS_DATA);
     renderNews(NEWS_DATA);
+    renderAcademy(ACADEMY_SETTINGS, ACADEMY_COURSES, ACADEMY_PLANS);
 
     // ============================================
     // Then refresh from Firebase
@@ -298,7 +407,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 window.MHM_STORE.getArtists(),
                 window.MHM_STORE.getSingles(),
                 window.MHM_STORE.getEvents(),
-                window.MHM_STORE.getNews()
+                window.MHM_STORE.getNews(),
+                window.MHM_STORE.getAcademySettings(),
+                window.MHM_STORE.getAcademyCourses(),
+                window.MHM_STORE.getAcademyPlans()
             ]);
             renderArtistsPreview(results[0]);
             renderArtistsFull(results[0]);
@@ -306,6 +418,7 @@ document.addEventListener('DOMContentLoaded', function () {
             renderEventsPreview(results[2]);
             renderEventsPage(results[2]);
             renderNews(results[3]);
+            renderAcademy(results[4], results[5], results[6]);
         } catch (err) {
             console.warn('Неуспешно зареждане от базата, използвам локални данни.', err);
         }
@@ -371,6 +484,16 @@ document.addEventListener('DOMContentLoaded', function () {
         const hash = (window.location.hash || '').replace('#', '');
         if (!hash) return;
         if (hash === 'privacy') { navigateToPage('privacy'); return; }
+        if (hash === 'academy-prices') {
+            navigateToPage('academy');
+            setAcademyTab('prices');
+            return;
+        }
+        if (hash === 'academy') {
+            navigateToPage('academy');
+            setAcademyTab('home');
+            return;
+        }
         if (hash.indexOf('event-') === 0) {
             navigateToPage('events');
             selectEvent(hash.replace('event-', ''));

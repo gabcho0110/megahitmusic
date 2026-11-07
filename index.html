@@ -226,60 +226,62 @@
         <section id="page-academy" class="page">
             <div class="page-header">
                 <div class="container">
-                    <h1 class="page-title">Академия "MEGA HIT MUSIC"</h1>
-                    <p class="page-breadcrumb"><a href="#home" data-page="home">Начало</a> / Академия</p>
+                    <h1 class="page-title" id="academyPageTitle">Академия</h1>
+                    <p class="page-breadcrumb">
+                        <a href="#home" data-page="home">Начало</a> /
+                        <a href="#academy" data-academy-tab="home">Академия</a> /
+                        <span id="academyCrumb">Начална страница</span>
+                    </p>
                 </div>
             </div>
+
             <div class="container">
-                <div class="academy-content">
-                    <div class="academy-intro">
-                        <h2>&#127891; Музикална академия</h2>
-                        <p>Академия "MEGA HIT MUSIC" е мястото, където младите таланти получават професионално обучение и възможност за развитие в музикалната индустрия.</p>
+                <div class="academy-subnav">
+                    <button class="academy-tab active" data-academy-tab="home">Начална страница</button>
+                    <button class="academy-tab" data-academy-tab="prices">Цени</button>
+                </div>
+
+                <!-- Academy: home -->
+                <div class="academy-view active" id="academy-home">
+                    <div class="academy-hero">
+                        <div class="academy-hero-emoji" id="academyEmoji">&#127891;</div>
+                        <h2 class="academy-hero-title" id="academyTitle">Академия "MEGA HIT MUSIC"</h2>
+                        <p class="academy-hero-subtitle" id="academySubtitle"></p>
+                        <p class="academy-hero-intro" id="academyIntro"></p>
                     </div>
-                    <div class="pricing-grid">
-                        <div class="pricing-card">
-                            <div class="pricing-header">
-                                <h3>Стандарт</h3>
-                                <div class="pricing-price">от 10 &euro;</div>
+
+                    <div class="section-header academy-courses-head">
+                        <div class="section-tag">Дисциплини</div>
+                        <h2 class="section-title">Какво <span class="accent">преподаваме</span></h2>
+                    </div>
+                    <div class="academy-courses" id="academyCourses"></div>
+
+                    <div class="academy-desc" id="academyDescription"></div>
+
+                    <div class="cta-banner academy-cta">
+                        <div class="cta-content">
+                            <h2 id="academyCtaTitle">Готов ли си за първия урок?</h2>
+                            <p id="academyCtaText">Запиши се за пробен урок и виж как работим.</p>
+                            <div class="hero-buttons">
+                                <a href="#contact" class="btn btn-primary" data-page="contact">Свържи се с нас</a>
+                                <button class="btn btn-outline" data-academy-tab="prices">Виж цените</button>
                             </div>
-                            <ul class="pricing-features">
-                                <li>&#10003; Професионално оценяване от жури</li>
-                                <li>&#10003; Дигитална грамота</li>
-                                <li>&#10003; Участие в класирането</li>
-                            </ul>
-                            <a href="#contact" class="btn btn-outline" data-page="contact">Запиши се</a>
                         </div>
-                        <div class="pricing-card pricing-featured">
-                            <div class="pricing-badge">Препоръчваме</div>
-                            <div class="pricing-header">
-                                <h3>Разширено</h3>
-                                <div class="pricing-price">от 20 &euro;</div>
-                            </div>
-                            <ul class="pricing-features">
-                                <li>&#10003; Всичко от "Стандарт"</li>
-                                <li>&#10003; Публикуване на изпълнението</li>
-                                <li>&#10003; Участие в "Медийна звезда"</li>
-                                <li>&#10003; Сертификат за преподавателя</li>
-                                <li>&#10003; Участие в онлайн Гала концерт</li>
-                                <li>&#10003; 1 безплатен билет + 1 за придружител</li>
-                            </ul>
-                            <a href="#contact" class="btn btn-primary" data-page="contact">Запиши се</a>
-                        </div>
-                        <div class="pricing-card">
-                            <div class="pricing-header">
-                                <h3>Звездно участие</h3>
-                                <div class="pricing-price">от 30 &euro;</div>
-                            </div>
-                            <ul class="pricing-features">
-                                <li>&#10003; Всичко от "Разширено"</li>
-                                <li>&#10003; Приоритетно участие в концерта</li>
-                                <li>&#10003; Разширено медийно представяне</li>
-                                <li>&#10003; Лично интервю</li>
-                                <li>&#10003; Публикация на статия</li>
-                                <li>&#10003; 1 билет + 2 за придружители</li>
-                            </ul>
-                            <a href="#contact" class="btn btn-outline" data-page="contact">Запиши се</a>
-                        </div>
+                    </div>
+                </div>
+
+                <!-- Academy: prices -->
+                <div class="academy-view" id="academy-prices">
+                    <div class="academy-prices-head">
+                        <h2>Цени и нива на обучение</h2>
+                        <p>Изберете ниво според целите си — от първия пробен урок до участие на сцена.</p>
+                    </div>
+                    <div class="pricing-grid" id="academyPlans"></div>
+                    <p class="academy-note" id="academyNote"></p>
+                    <div class="academy-contact-row">
+                        <span>За записване:</span>
+                        <a id="academyPhone" href="tel:0892741651">0892 741 651</a>
+                        <a id="academyEmail" href="mailto:office.megahit.music@gmail.com">office.megahit.music@gmail.com</a>
                     </div>
                 </div>
             </div>

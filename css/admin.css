@@ -246,6 +246,15 @@
     margin: 12px 6px;
 }
 
+.sidebar-group-label {
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1.4px;
+    padding: 10px 14px 4px;
+}
+
 .badge {
     margin-left: auto;
     background: #ef4444;
