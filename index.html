@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="MEGA HIT MUSIC - Официален сайт на музикалния лейбъл. Поп-фолк, народна музика, фестивали и конкурси.">
+    <title>MEGA HIT MUSIC - Официален сайт</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#127925;</text></svg>">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav id="navbar" class="navbar">
+        <div class="nav-container">
+            <a href="#home" class="nav-logo" data-page="home">
+                <span class="logo-icon">&#127925;</span>
+                <span class="logo-text">MEGA HIT <span class="accent">MUSIC</span></span>
+            </a>
+            <button class="nav-toggle" id="navToggle" aria-label="Меню">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="#home" class="nav-link active" data-page="home">Начало</a></li>
+                <li><a href="#artists" class="nav-link" data-page="artists">Изпълнители</a></li>
+                <li><a href="#singles" class="nav-link" data-page="singles">Сингли</a></li>
+                <li class="nav-dropdown">
+                    <a href="#events" class="nav-link" data-page="events">Събития &#9662;</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#events" data-event="easter-parade">Велик Великденски парад</a></li>
+                        <li><a href="#events" data-event="magic-bulgaria">Магията на България</a></li>
+                        <li><a href="#events" data-event="magic-folklore">Магията на фолклора</a></li>
+                        <li><a href="#events" data-event="christmas-magic">Коледна магия на таланта</a></li>
+                    </ul>
+                </li>
+                <li><a href="#news" class="nav-link" data-page="news">Новини</a></li>
+                <li><a href="#academy" class="nav-link" data-page="academy">Академия</a></li>
+                <li><a href="#contact" class="nav-link" data-page="contact">Контакти</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Page Content Container -->
+    <main id="content">
+        <!-- HOME PAGE -->
+        <section id="page-home" class="page active">
+            <!-- Hero -->
+            <div class="hero">
+                <div class="hero-overlay"></div>
+                <div class="hero-content">
+                    <div class="hero-badge">&#127925; Музикален лейбъл</div>
+                    <h1 class="hero-title">
+                        <span class="hero-line">MEGA HIT</span>
+                        <span class="hero-line accent-text">MUSIC</span>
+                    </h1>
+                    <p class="hero-subtitle">Първият лейбъл в България, който обединява поп-фолк и народна музика, давайки сцена на млади таланти.</p>
+                    <div class="hero-buttons">
+                        <a href="#artists" class="btn btn-primary" data-page="artists">Запознай се с изпълнителите</a>
+                        <a href="#events" class="btn btn-outline" data-page="events">Предстоящи събития</a>
+                    </div>
+                </div>
+                <div class="hero-scroll">
+                    <span>Скролни надолу</span>
+                    <div class="scroll-indicator"></div>
+                </div>
+            </div>
+
+            <!-- Stats Bar -->
+            <div class="stats-bar">
+                <div class="stat-item">
+                    <div class="stat-number" id="statArtists">3+</div>
+                    <div class="stat-label">Изпълнители</div>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <div class="stat-number" id="statEvents">4</div>
+                    <div class="stat-label">Събития</div>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <div class="stat-number" id="statAwards">7</div>
+                    <div class="stat-label">Награди</div>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <div class="stat-number">2024</div>
+                    <div class="stat-label">Основан</div>
+                </div>
+            </div>
+
+            <!-- About Section -->
+            <div class="section">
+                <div class="container">
+                    <div class="section-header">
+                        <div class="section-tag">За нас</div>
+                        <h2 class="section-title">Коя е <span class="accent">MEGA HIT MUSIC</span>?</h2>
+                    </div>
+                    <div class="about-grid">
+                        <div class="about-card">
+                            <div class="about-icon">&#127908;</div>
+                            <h3>Първи по рода си</h3>
+                            <p>Единственият лейбъл, който обединява поп-фолк и народна музика, давайки сцена на млади таланти.</p>
+                        </div>
+                        <div class="about-card">
+                            <div class="about-icon">&#127915;</div>
+                            <h3>Организатор на събития</h3>
+                            <p>Създаваме платформи за изява - фестивали, конкурси и уебинари за млади изпълнители.</p>
+                        </div>
+                        <div class="about-card">
+                            <div class="about-icon">&#127916;</div>
+                            <h3>Продуцентска дейност</h3>
+                            <p>Продуцираме артисти и помагаме за развитието на тяхната музикална кариера.</p>
+                        </div>
+                        <div class="about-card">
+                            <div class="about-icon">&#11088;</div>
+                            <h3>Ясна визия</h3>
+                            <p>Не чакаме възможности - създаваме ги. Изграждаме лейбъл, събития и музикална кариера.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Featured Events Preview -->
+            <div class="section section-alt">
+                <div class="container">
+                    <div class="section-header">
+                        <div class="section-tag">Събития</div>
+                        <h2 class="section-title">Предстоящи <span class="accent">събития</span></h2>
+                    </div>
+                    <div class="events-preview-grid">
+                        <div class="event-card" data-event="magic-bulgaria">
+                            <div class="event-card-tag">Конкурс</div>
+                            <div class="event-card-icon">&#127925;</div>
+                            <h3>Магията на България 2026</h3>
+                            <p class="event-card-desc">III Национален музикален онлайн конкурс за изкуства</p>
+                            <div class="event-card-date">
+                                <span>&#128197;</span> 22.07.2026
+                            </div>
+                            <a href="#events" class="event-card-link" data-event="magic-bulgaria">Виж повече &#8594;</a>
+                        </div>
+                        <div class="event-card" data-event="magic-folklore">
+                            <div class="event-card-tag">Фестивал</div>
+                            <div class="event-card-icon">&#127908;</div>
+                            <h3>Магията на фолклора 2026</h3>
+                            <p class="event-card-desc">II Национален фестивал за български фолклор</p>
+                            <div class="event-card-date">
+                                <span>&#128197;</span> 01.11.2026
+                            </div>
+                            <a href="#events" class="event-card-link" data-event="magic-folklore">Виж повече &#8594;</a>
+                        </div>
+                        <div class="event-card" data-event="christmas-magic">
+                            <div class="event-card-tag">Конкурс</div>
+                            <div class="event-card-icon">&#127876;</div>
+                            <h3>Коледна магия на таланта</h3>
+                            <p class="event-card-desc">Международен коледен онлайн конкурс 2025</p>
+                            <div class="event-card-date">
+                                <span>&#128197;</span> 28.12.2025
+                            </div>
+                            <a href="#events" class="event-card-link" data-event="christmas-magic">Виж повече &#8594;</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Artists Preview -->
+            <div class="section">
+                <div class="container">
+                    <div class="section-header">
+                        <div class="section-tag">Таланти</div>
+                        <h2 class="section-title">Нашите <span class="accent">изпълнители</span></h2>
+                    </div>
+                    <div class="artists-preview-grid" id="artistsPreview">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact CTA -->
+            <div class="cta-banner">
+                <div class="container">
+                    <div class="cta-content">
+                        <h2>Готов ли си да блеснеш?</h2>
+                        <p>Свържи се с нас и направи първата крачка към своята музикална кариера.</p>
+                        <a href="#contact" class="btn btn-primary" data-page="contact">Свържи се с нас</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ARTISTS PAGE -->
+        <section id="page-artists" class="page">
+            <div class="page-header">
+                <div class="container">
+                    <h1 class="page-title">Изпълнители</h1>
+                    <p class="page-breadcrumb"><a href="#home" data-page="home">Начало</a> / Изпълнители</p>
+                </div>
+            </div>
+            <div class="container">
+                <div id="artistsContainer" class="artists-list">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- SINGLES PAGE -->
+        <section id="page-singles" class="page">
+            <div class="page-header">
+                <div class="container">
+                    <h1 class="page-title">Сингли</h1>
+                    <p class="page-breadcrumb"><a href="#home" data-page="home">Начало</a> / Сингли</p>
+                </div>
+            </div>
+            <div class="container">
+                <div id="singlesContainer" class="singles-grid">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- EVENTS PAGE -->
+        <section id="page-events" class="page">
+            <div class="page-header">
+                <div class="container">
+                    <h1 class="page-title">Събития</h1>
+                    <p class="page-breadcrumb"><a href="#home" data-page="home">Начало</a> / Събития</p>
+                </div>
+            </div>
+            <div class="container">
+                <!-- Event tabs -->
+                <div class="event-tabs">
+                    <button class="event-tab active" data-event-tab="magic-bulgaria">Магията на България</button>
+                    <button class="event-tab" data-event-tab="magic-folklore">Магията на фолклора</button>
+                    <button class="event-tab" data-event-tab="easter-parade">Великденски парад</button>
+                    <button class="event-tab" data-event-tab="christmas-magic">Коледна магия</button>
+                </div>
+
+                <!-- Event: Magic of Bulgaria -->
+                <div class="event-detail active" id="event-magic-bulgaria">
+                    <!-- Content loaded by JS -->
+                </div>
+
+                <!-- Event: Magic of Folklore -->
+                <div class="event-detail" id="event-magic-folklore">
+                    <!-- Content loaded by JS -->
+                </div>
+
+                <!-- Event: Easter Parade -->
+                <div class="event-detail" id="event-easter-parade">
+                    <!-- Content loaded by JS -->
+                </div>
+
+                <!-- Event: Christmas Magic -->
+                <div class="event-detail" id="event-christmas-magic">
+                    <!-- Content loaded by JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- NEWS PAGE -->
+        <section id="page-news" class="page">
+            <div class="page-header">
+                <div class="container">
+                    <h1 class="page-title">Новини</h1>
+                    <p class="page-breadcrumb"><a href="#home" data-page="home">Начало</a> / Новини</p>
+                </div>
+            </div>
+            <div class="container">
+                <div id="newsContainer" class="news-grid">
+                    <!-- Populated by JS / Firebase -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ACADEMY PAGE -->
+        <section id="page-academy" class="page">
+            <div class="page-header">
+                <div class="container">
+                    <h1 class="page-title">Академия "MEGA HIT MUSIC"</h1>
+                    <p class="page-breadcrumb"><a href="#home" data-page="home">Начало</a> / Академия</p>
+                </div>
+            </div>
+            <div class="container">
+                <div class="academy-content">
+                    <div class="academy-intro">
+                        <h2>&#127891; Музикална академия</h2>
+                        <p>Академия "MEGA HIT MUSIC" е мястото, където младите таланти получават професионално обучение и възможност за развитие в музикалната индустрия.</p>
+                    </div>
+                    <div class="pricing-grid">
+                        <div class="pricing-card">
+                            <div class="pricing-header">
+                                <h3>Стандарт</h3>
+                                <div class="pricing-price">от 10 &euro;</div>
+                            </div>
+                            <ul class="pricing-features">
+                                <li>&#10003; Професионално оценяване от жури</li>
+                                <li>&#10003; Дигитална грамота</li>
+                                <li>&#10003; Участие в класирането</li>
+                            </ul>
+                            <a href="#contact" class="btn btn-outline" data-page="contact">Запиши се</a>
+                        </div>
+                        <div class="pricing-card pricing-featured">
+                            <div class="pricing-badge">Препоръчваме</div>
+                            <div class="pricing-header">
+                                <h3>Разширено</h3>
+                                <div class="pricing-price">от 20 &euro;</div>
+                            </div>
+                            <ul class="pricing-features">
+                                <li>&#10003; Всичко от "Стандарт"</li>
+                                <li>&#10003; Публикуване на изпълнението</li>
+                                <li>&#10003; Участие в "Медийна звезда"</li>
+                                <li>&#10003; Сертификат за преподавателя</li>
+                                <li>&#10003; Участие в онлайн Гала концерт</li>
+                                <li>&#10003; 1 безплатен билет + 1 за придружител</li>
+                            </ul>
+                            <a href="#contact" class="btn btn-primary" data-page="contact">Запиши се</a>
+                        </div>
+                        <div class="pricing-card">
+                            <div class="pricing-header">
+                                <h3>Звездно участие</h3>
+                                <div class="pricing-price">от 30 &euro;</div>
+                            </div>
+                            <ul class="pricing-features">
+                                <li>&#10003; Всичко от "Разширено"</li>
+                                <li>&#10003; Приоритетно участие в концерта</li>
+                                <li>&#10003; Разширено медийно представяне</li>
+                                <li>&#10003; Лично интервю</li>
+                                <li>&#10003; Публикация на статия</li>
+                                <li>&#10003; 1 билет + 2 за придружители</li>
+                            </ul>
+                            <a href="#contact" class="btn btn-outline" data-page="contact">Запиши се</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CONTACT PAGE -->
+        <section id="page-contact" class="page">
+            <div class="page-header">
+                <div class="container">
+                    <h1 class="page-title">Контакти</h1>
+                    <p class="page-breadcrumb"><a href="#home" data-page="home">Начало</a> / Контакти</p>
+                </div>
+            </div>
+            <div class="container">
+                <div class="contact-grid">
+                    <!-- Contact Info -->
+                    <div class="contact-info">
+                        <div class="contact-card">
+                            <div class="contact-icon">&#128222;</div>
+                            <h3>Телефони</h3>
+                            <p><a href="tel:0892741651">0892 741 651</a></p>
+                            <p><a href="tel:0896377726">0896 377 726</a></p>
+                        </div>
+                        <div class="contact-card">
+                            <div class="contact-icon">&#9993;</div>
+                            <h3>Имейли</h3>
+                            <p><a href="mailto:office.megahit.music@gmail.com">office.megahit.music@gmail.com</a></p>
+                            <p><a href="mailto:radoslav.iakimov.music@gmail.com">radoslav.iakimov.music@gmail.com</a></p>
+                        </div>
+                        <div class="contact-card">
+                            <div class="contact-icon">&#128100;</div>
+                            <h3>Продуценти</h3>
+                            <p><strong>Радослав Якимов</strong><br>PR Manager и Музикален продуцент</p>
+                            <p><strong>Стефан Георгиев</strong><br>Изпълнителен продуцент</p>
+                        </div>
+                        <div class="contact-card">
+                            <div class="contact-icon">&#128337;</div>
+                            <h3>Работно време</h3>
+                            <div class="work-hours">
+                                <div class="work-day"><span>Понеделник</span><span>14:30 - 21:00</span></div>
+                                <div class="work-day"><span>Вторник</span><span>14:30 - 18:00 / 20:00 - 21:00</span></div>
+                                <div class="work-day"><span>Сряда</span><span>13:30 - 21:00</span></div>
+                                <div class="work-day"><span>Четвъртък</span><span>14:30 - 18:00 / 20:00 - 21:00</span></div>
+                                <div class="work-day"><span>Петък</span><span>13:30 - 16:30 / 18:30 - 21:00</span></div>
+                                <div class="work-day"><span>Събота</span><span>13:00 - 22:00</span></div>
+                                <div class="work-day"><span>Неделя</span><span>14:00 - 20:00</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contact Form -->
+                    <div class="contact-form-wrap">
+                        <h2>&#9993; Изпрати ни съобщение</h2>
+                        <form id="contactForm" class="contact-form">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="cf-name">Име *</label>
+                                    <input type="text" id="cf-name" name="name" required placeholder="Вашето име">
+                                </div>
+                                <div class="form-group">
+                                    <label for="cf-email">Имейл *</label>
+                                    <input type="email" id="cf-email" name="email" required placeholder="Вашият имейл">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="cf-phone">Телефон</label>
+                                <input type="tel" id="cf-phone" name="phone" placeholder="Вашият телефон">
+                            </div>
+                            <div class="form-group">
+                                <label for="cf-subject">Относно</label>
+                                <select id="cf-subject" name="subject">
+                                    <option value="general">Общо запитване</option>
+                                    <option value="participation">Участие в конкурс</option>
+                                    <option value="academy">Академия</option>
+                                    <option value="collaboration">Сътрудничество</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="cf-message">Съобщение *</label>
+                                <textarea id="cf-message" name="message" rows="5" required placeholder="Вашето съобщение..."></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-block">Изпрати съобщение</button>
+                            <div id="formMessage" class="form-message"></div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PRIVACY POLICY PAGE -->
+        <section id="page-privacy" class="page">
+            <div class="page-header">
+                <div class="container">
+                    <h1 class="page-title">Политика за поверителност</h1>
+                    <p class="page-breadcrumb"><a href="#home" data-page="home">Начало</a> / Политика за поверителност</p>
+                </div>
+            </div>
+            <div class="container">
+                <div class="privacy-content">
+                    <h2>Политика за поверителност</h2>
+                    <p>Онлайн телевизия "MEGA HIT MUSIC" и прилежащите й уеб-базирани информационни услуги обработва вашите лични данни по следната процедура:</p>
+                    
+                    <h3>Правила за обработка на данни</h3>
+                    <p>Описаните правила са приложими към обработката на данни при налична регистрация и употреба на уебсайтовете на телевизия "MEGA HIT MUSIC" и "MEGA HIT MUSIC Media" и др.</p>
+                    
+                    <h3>Събрана информация</h3>
+                    <p>Телевизия "MEGA HIT MUSIC" събира и обработва лични данни при информация, предоставена от вас при контакт по телефон, кореспонденция през електронна поща, попълване на уеб-форми, разположени и активни върху нашите уеб-базирани информационни услуги.</p>
+                    <p>Информацията може да включва следните данни:</p>
+                    <ul>
+                        <li>Име</li>
+                        <li>Адрес</li>
+                        <li>Адрес на електронна поща</li>
+                        <li>Телефонен номер</li>
+                        <li>Възраст, дата на раждане, пол и др.</li>
+                    </ul>
+                    
+                    <h3>Защита на личните данни</h3>
+                    <p>Онлайн телевизия "MEGA HIT MUSIC" не събира и обработва чувствителни лични данни, свързани с политически възгледи, сексуална ориентация, религиозна или етническа принадлежност. Когато по ваше желание сте предоставили чувствителни лични данни, те ще бъдат изтрити от нашите системи в съответствие със законосъобразните процедури.</p>
+                    
+                    <h3>Бисквитки (Cookies)</h3>
+                    <p>При посещение на нашите уеб-базирани информационни услуги автоматично, посредством употребата на бисквитки (cookies) се събират следните данни:</p>
+                    <ul>
+                        <li>IP адрес, от който се свързвате към нашите услуги</li>
+                        <li>Данни за достъп / логин данни</li>
+                        <li>Часова зона</li>
+                        <li>Тип и версия на уеб-браузър</li>
+                        <li>Тип на устройството за достъп</li>
+                        <li>Операционна система на устройството за достъп</li>
+                        <li>URL</li>
+                        <li>Информация за активности, извършени посредством услугите</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col footer-brand">
+                    <div class="footer-logo">
+                        <span class="logo-icon">&#127925;</span>
+                        <span class="logo-text">MEGA HIT <span class="accent">MUSIC</span></span>
+                    </div>
+                    <p>Първият лейбъл в България, който обединява поп-фолк и народна музика. Подкрепяме млади таланти и създаваме платформи за изява.</p>
+                    <div class="footer-social">
+                        <a href="mailto:office.megahit.music@gmail.com" class="social-link" aria-label="Имейл">&#9993;</a>
+                        <a href="tel:0892741651" class="social-link" aria-label="Телефон">&#128222;</a>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h4>Навигация</h4>
+                    <ul class="footer-links">
+                        <li><a href="#home" data-page="home">Начало</a></li>
+                        <li><a href="#artists" data-page="artists">Изпълнители</a></li>
+                        <li><a href="#singles" data-page="singles">Сингли</a></li>
+                        <li><a href="#events" data-page="events">Събития</a></li>
+                        <li><a href="#news" data-page="news">Новини</a></li>
+                        <li><a href="#academy" data-page="academy">Академия</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Събития</h4>
+                    <ul class="footer-links">
+                        <li><a href="#events" data-event="easter-parade">Великденски парад</a></li>
+                        <li><a href="#events" data-event="magic-bulgaria">Магията на България</a></li>
+                        <li><a href="#events" data-event="magic-folklore">Магията на фолклора</a></li>
+                        <li><a href="#events" data-event="christmas-magic">Коледна магия</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Контакти</h4>
+                    <ul class="footer-links">
+                        <li><a href="mailto:office.megahit.music@gmail.com">office.megahit.music@gmail.com</a></li>
+                        <li><a href="tel:0892741651">0892 741 651</a></li>
+                        <li><a href="tel:0896377726">0896 377 726</a></li>
+                    </ul>
+                    <a href="#contact" class="btn btn-outline btn-sm" data-page="contact">Виж повече</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; &amp; &#8471; 2026, MEGA HIT MUSIC - Всички права са запазени!</p>
+                <a href="#privacy" class="footer-privacy" data-page="privacy">Политика за поверителност</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/firebase-config.js"></script>
+    <script src="js/data.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
