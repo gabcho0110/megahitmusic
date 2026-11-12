@@ -57,6 +57,13 @@ document.addEventListener('DOMContentLoaded', function () {
             e.preventDefault();
             navigateToPage('events');
             selectEvent(eventEl.dataset.event);
+            return;
+        }
+        const fileEl = e.target.closest('[data-file]');
+        if (fileEl) {
+            e.preventDefault();
+            downloadActivityFile(fileEl);
+            return;
         }
     });
 
@@ -285,6 +292,135 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // ============================================
+    // Extracurricular activities
+    // ============================================
+    function fileIcon(name) {
+        const ext = String(name || '').split('.').pop().toLowerCase();
+        if (ext === 'pdf') return '📄';
+        if (ext === 'ppt' || ext === 'pptx' || ext === 'pps' || ext === 'ppsx') return '📊';
+        if (ext === 'doc' || ext === 'docx' || ext === 'rtf') return '📝';
+        if (ext === 'xls' || ext === 'xlsx' || ext === 'csv') return '📈';
+        if (['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'].indexOf(ext) >= 0) return '🖼️';
+        if (ext === 'mp4' || ext === 'mov' || ext === 'avi' || ext === 'mkv') return '🎬';
+        return '📎';
+    }
+
+    function formatBytes(bytes) {
+        const n = Number(bytes) || 0;
+        if (!n) return '';
+        if (n < 1024) return n + ' B';
+        if (n < 1024 * 1024) return (n / 1024).toFixed(0) + ' KB';
+        return (n / (1024 * 1024)).toFixed(1).replace(/\.0$/, '') + ' MB';
+    }
+
+    function dataUrlToBlob(dataUrl) {
+        const parts = String(dataUrl || '').split(',');
+        const match = parts[0].match(/data:([^;]+)/);
+        const mime = match ? match[1] : 'application/octet-stream';
+        const binary = atob(parts[1] || '');
+        const bytes = new Uint8Array(binary.length);
+        for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+        return new Blob([bytes], { type: mime });
+    }
+
+    async function downloadActivityFile(btn) {
+        const fileId = btn.dataset.file;
+        const fallbackName = btn.dataset.filename || 'presentation';
+        if (!fileId || !window.MHM_STORE) return;
+
+        const originalHTML = btn.innerHTML;
+        btn.disabled = true;
+        btn.classList.add('loading');
+        btn.innerHTML = '<span class="file-chip-icon">⏳</span> Зареждане…';
+
+        try {
+            const record = await window.MHM_STORE.getActivityFile(fileId);
+            const blob = dataUrlToBlob(record.data);
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = record.name || fallbackName;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            setTimeout(function () { URL.revokeObjectURL(url); }, 10000);
+        } catch (err) {
+            console.error(err);
+            alert(err && err.message ? err.message : 'Файлът не може да бъде изтеглен.');
+        } finally {
+            btn.disabled = false;
+            btn.classList.remove('loading');
+            btn.innerHTML = originalHTML;
+        }
+    }
+
+    function activityMetaRow(label, value) {
+        if (!value) return '';
+        return '<div class="activity-meta-item">' +
+            '<span class="activity-meta-label">' + esc(label) + '</span>' +
+            '<span class="activity-meta-value">' + esc(value) + '</span>' +
+            '</div>';
+    }
+
+    function renderActivities(activities) {
+        const container = document.getElementById('activitiesContainer');
+        if (!container) return;
+
+        if (!activities || !activities.length) {
+            container.innerHTML = '<div class="empty-state">' +
+                '<div class="empty-state-icon">🎭</div>' +
+                '<p>Все още няма публикувани извънкласни дейности.</p>' +
+                '</div>';
+            return;
+        }
+
+        container.innerHTML = activities.map(function (a) {
+            const files = Array.isArray(a.files) ? a.files : [];
+            const filesHTML = files.length
+                ? '<div class="activity-files">' +
+                    '<span class="activity-files-label">Презентации</span>' +
+                    '<div class="activity-files-list">' +
+                    files.map(function (f) {
+                        const size = formatBytes(f.size);
+                        return '<button type="button" class="file-chip" data-file="' + esc(f.id) + '"' +
+                            ' data-filename="' + esc(f.name || 'file') + '"' +
+                            ' title="Изтегли ' + esc(f.name || '') + '">' +
+                            '<span class="file-chip-icon">' + fileIcon(f.name) + '</span>' +
+                            '<span class="file-chip-name">' + esc(f.name || 'файл') + '</span>' +
+                            (size ? '<span class="file-chip-size">' + esc(size) + '</span>' : '') +
+                            '<span class="file-chip-dl">↓</span>' +
+                            '</button>';
+                    }).join('') +
+                    '</div></div>'
+                : '';
+
+            const linkHTML = a.link
+                ? '<a class="btn btn-outline btn-sm activity-link" href="' + esc(a.link) +
+                    '" target="_blank" rel="noopener">🔗 Отвори материалите</a>'
+                : '';
+
+            return '' +
+                '<article class="activity-card">' +
+                    '<div class="activity-head">' +
+                        '<div class="activity-emoji">' + esc(a.emoji || '🎭') + '</div>' +
+                        '<div class="activity-head-text">' +
+                            (a.date ? '<div class="activity-date">' + formatDate(a.date) + '</div>' : '') +
+                            '<h3 class="activity-title">' + esc(a.title || '') + '</h3>' +
+                        '</div>' +
+                    '</div>' +
+                    (a.description ? '<p class="activity-desc">' + esc(a.description) + '</p>' : '') +
+                    '<div class="activity-meta">' +
+                        activityMetaRow('Организатор', a.organizer) +
+                        activityMetaRow('Участници', a.participants) +
+                        activityMetaRow('Място', a.location) +
+                    '</div>' +
+                    filesHTML +
+                    (linkHTML ? '<div class="activity-actions">' + linkHTML + '</div>' : '') +
+                '</article>';
+        }).join('');
+    }
+
+    // ============================================
     // Academy
     // ============================================
     function renderAcademy(settings, courses, plans) {
@@ -395,6 +531,7 @@ document.addEventListener('DOMContentLoaded', function () {
     renderEventsPreview(EVENTS_DATA);
     renderEventsPage(EVENTS_DATA);
     renderNews(NEWS_DATA);
+    renderActivities(ACTIVITIES_DATA);
     renderAcademy(ACADEMY_SETTINGS, ACADEMY_COURSES, ACADEMY_PLANS);
 
     // ============================================
@@ -410,7 +547,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 window.MHM_STORE.getNews(),
                 window.MHM_STORE.getAcademySettings(),
                 window.MHM_STORE.getAcademyCourses(),
-                window.MHM_STORE.getAcademyPlans()
+                window.MHM_STORE.getAcademyPlans(),
+                window.MHM_STORE.getActivities()
             ]);
             renderArtistsPreview(results[0]);
             renderArtistsFull(results[0]);
@@ -419,6 +557,7 @@ document.addEventListener('DOMContentLoaded', function () {
             renderEventsPage(results[2]);
             renderNews(results[3]);
             renderAcademy(results[4], results[5], results[6]);
+            renderActivities(results[7]);
         } catch (err) {
             console.warn('Неуспешно зареждане от базата, използвам локални данни.', err);
         }

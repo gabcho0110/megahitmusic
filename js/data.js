@@ -677,6 +677,40 @@ const ACADEMY_PLANS = [
     }
 ];
 
+// ============================================
+// Extracurricular activities ("Извънкласни дейности")
+// files: [{ id, name, size, type }] - presentations stored in activityFiles/<id>
+// link:  optional external URL (Drive folder, etc.)
+// ============================================
+const ACTIVITIES_DATA = [
+    {
+        id: "proletni-glasove",
+        title: "Училищен концерт „Пролетни гласове“",
+        date: "2026-04-18",
+        emoji: "🌸",
+        organizer: "Академия „MEGA HIT MUSIC“",
+        participants: "Вокална група „Звездички“ (5–7 клас), Народен хор (8–10 клас), солисти от класа по поп и джаз пеене.",
+        location: "Концертна зала на училището",
+        description: "Годишен пролетен концерт, с който отбелязваме края на втория учебен срок. Учениците представят програма от български и световни песни, подготвена в часовете по музика и в извънкласните занимания.",
+        files: [],
+        link: "",
+        order: 1
+    },
+    {
+        id: "maistorski-klas-folklor",
+        title: "Майсторски клас по народно пеене",
+        date: "2026-05-22",
+        emoji: "🎤",
+        organizer: "Академия „MEGA HIT MUSIC“ съвместно с читалище „Пробуда“",
+        participants: "Ученици от 6–11 клас, участници в клуба по народно пеене.",
+        location: "Читалище „Пробуда“",
+        description: "Двудневен майсторски клас с гост-преподавател. Работим върху вокална техника, регионални стилове и сценично присъствие. Завършва с открит урок пред родители.",
+        files: [],
+        link: "",
+        order: 2
+    }
+];
+
 // Default admin account - created automatically on first login
 // if the users list is still empty. Password is stored only as a hash.
 const DEFAULT_ADMIN = {
