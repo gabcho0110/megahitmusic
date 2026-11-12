@@ -23,18 +23,6 @@
       ".read": true,
       ".write": true
     },
-    "activities": {
-      ".read": true,
-      ".write": true
-    },
-    "activityFiles": {
-      ".read": true,
-      ".write": true
-    },
-    "academy": {
-      ".read": true,
-      ".write": true
-    },
     "admin": {
       ".read": true,
       ".write": true

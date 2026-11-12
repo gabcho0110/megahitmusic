@@ -13,20 +13,11 @@ const MHM_STORE = (function () {
         events: 'events',
         news: 'news',
         messages: 'messages',
-        activities: 'activities',
         academyCourses: 'academy/courses',
         academyPlans: 'academy/plans'
     };
 
     const ACADEMY_SETTINGS_PATH = 'academy/settings';
-
-    // Presentations are stored as base64 data URLs in their own branch so the
-    // activity list stays light - a file is only downloaded when someone asks.
-    const ACTIVITY_FILES_PATH = 'activityFiles';
-
-    // Realtime Database rejects writes above 16 MB. Base64 inflates by ~33%,
-    // so 8 MB of raw file is a safe ceiling.
-    const MAX_FILE_BYTES = 8 * 1024 * 1024;
 
     function sdk() {
         return window.MHM || null;
@@ -199,90 +190,6 @@ const MHM_STORE = (function () {
         return ACADEMY_PLANS.slice().sort(byOrder);
     }
 
-    // ---------- extracurricular activities ----------
-    async function getActivities() {
-        const remote = await readCollection('activities');
-        if (remote && remote.length) {
-            return remote.slice().sort(function (a, b) {
-                const da = new Date(a.date || 0).getTime();
-                const db = new Date(b.date || 0).getTime();
-                if (da !== db && !isNaN(da) && !isNaN(db)) return db - da;
-                return byOrder(a, b);
-            });
-        }
-        return ACTIVITIES_DATA.slice().sort(byOrder);
-    }
-
-    function readAsDataUrl(file) {
-        return new Promise(function (resolve, reject) {
-            const reader = new FileReader();
-            reader.onload = function () { resolve(reader.result); };
-            reader.onerror = function () { reject(new Error('Файлът не може да бъде прочетен.')); };
-            reader.readAsDataURL(file);
-        });
-    }
-
-    function formatBytes(bytes) {
-        const n = Number(bytes) || 0;
-        if (n < 1024) return n + ' B';
-        if (n < 1024 * 1024) return (n / 1024).toFixed(0) + ' KB';
-        return (n / (1024 * 1024)).toFixed(1).replace(/\.0$/, '') + ' MB';
-    }
-
-    // Uploads one presentation. Returns the metadata stored on the activity.
-    async function uploadActivityFile(file) {
-        const s = sdk();
-        if (!s) throw new Error('Firebase не е наличен');
-        if (!file) throw new Error('Не е избран файл.');
-        if (file.size > MAX_FILE_BYTES) {
-            throw new Error('„' + file.name + '“ е ' + formatBytes(file.size) +
-                '. Максималният размер е ' + formatBytes(MAX_FILE_BYTES) + '.');
-        }
-
-        const dataUrl = await readAsDataUrl(file);
-        const newRef = s.push(s.ref(s.db, ACTIVITY_FILES_PATH));
-        await s.set(newRef, {
-            name: file.name,
-            size: file.size,
-            type: file.type || '',
-            data: dataUrl,
-            uploadedAt: new Date().toISOString()
-        });
-        return {
-            id: newRef.key,
-            name: file.name,
-            size: file.size,
-            type: file.type || ''
-        };
-    }
-
-    async function getActivityFile(fileId) {
-        const s = sdk();
-        if (!s) throw new Error('Firebase не е наличен');
-        const snap = await s.get(s.ref(s.db, ACTIVITY_FILES_PATH + '/' + fileId));
-        if (!snap.exists()) throw new Error('Файлът вече не е наличен.');
-        return snap.val();
-    }
-
-    async function deleteActivityFile(fileId) {
-        const s = sdk();
-        if (!s) return;
-        try {
-            await s.remove(s.ref(s.db, ACTIVITY_FILES_PATH + '/' + fileId));
-        } catch (err) {
-            console.warn('[MHM_STORE] delete file failed', err);
-        }
-    }
-
-    // Deletes an activity together with all of its presentations.
-    async function deleteActivity(id, files) {
-        const list = Array.isArray(files) ? files : [];
-        for (let i = 0; i < list.length; i++) {
-            if (list[i] && list[i].id) await deleteActivityFile(list[i].id);
-        }
-        return deleteItem('activities', id);
-    }
-
     // ---------- seeding ----------
     async function seedCollection(name, items) {
         const existing = await readCollection(name);
@@ -317,7 +224,6 @@ const MHM_STORE = (function () {
         result.singles = await seedCollection('singles', SINGLES_DATA);
         result.events = await seedCollection('events', EVENTS_DATA);
         result.news = await seedCollection('news', NEWS_DATA);
-        result.activities = await seedCollection('activities', ACTIVITIES_DATA);
         result.academyCourses = await seedCollection('academyCourses', ACADEMY_COURSES);
         result.academyPlans = await seedCollection('academyPlans', ACADEMY_PLANS);
         result.academySettings = await seedAcademySettings();
@@ -335,13 +241,6 @@ const MHM_STORE = (function () {
         addMessage: addMessage,
         markMessageRead: markMessageRead,
         deleteMessage: deleteMessage,
-        getActivities: getActivities,
-        uploadActivityFile: uploadActivityFile,
-        getActivityFile: getActivityFile,
-        deleteActivityFile: deleteActivityFile,
-        deleteActivity: deleteActivity,
-        formatBytes: formatBytes,
-        maxFileBytes: MAX_FILE_BYTES,
         getAcademySettings: getAcademySettings,
         saveAcademySettings: saveAcademySettings,
         getAcademyCourses: getAcademyCourses,

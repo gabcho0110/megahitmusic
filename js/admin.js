@@ -36,7 +36,6 @@
             events: [],
             news: [],
             messages: [],
-            activities: [],
             users: [],
             academySettings: {},
             academyCourses: [],
@@ -224,22 +223,6 @@
                 { key: 'password', label: 'Парола', type: 'password', span: 2 }
             ]
         },
-        activities: {
-            singular: 'дейност',
-            plural: 'дейности',
-            titleField: 'title',
-            fields: [
-                { key: 'title', label: 'Заглавие', type: 'text', required: true, span: 2 },
-                { key: 'date', label: 'Дата', type: 'date', span: 2 },
-                { key: 'organizer', label: 'Организатор', type: 'text', span: 2, hint: 'Кой организира дейността' },
-                { key: 'participants', label: 'Участници', type: 'textarea', rows: 3, span: 2, hint: 'Кой участва — клас, група, имена' },
-                { key: 'location', label: 'Място', type: 'text', span: 2 },
-                { key: 'emoji', label: 'Емоджи', type: 'text', hint: 'напр. 🎭' },
-                { key: 'order', label: 'Подредба', type: 'number' },
-                { key: 'link', label: 'Външен линк (по избор)', type: 'url', span: 2, hint: 'Напр. Google Drive папка с материали' },
-                { key: 'description', label: 'Описание', type: 'textarea', rows: 5, span: 2 }
-            ]
-        },
         academyCourses: {
             singular: 'дисциплина',
             plural: 'дисциплини',
@@ -331,7 +314,6 @@
     }
 
     function openEntityForm(collection, item) {
-        if (collection === 'activities') { openActivityForm(item); return; }
         const schema = SCHEMAS[collection];
         if (!schema) return;
         const isEdit = !!item;
@@ -449,172 +431,6 @@
     }
 
     // ============================================
-    // Activity form (fields + presentation uploads)
-    // ============================================
-    function openActivityForm(item) {
-        const schema = SCHEMAS.activities;
-        const isEdit = !!item;
-        const values = item ? Object.assign({}, item) : {};
-
-        let existingFiles = Array.isArray(values.files) ? values.files.slice() : [];
-        let removedFiles = [];
-        let stagedFiles = [];
-
-        const fieldsHTML = schema.fields.map(function (f) {
-            let val = values[f.key];
-            if (f.key === 'date' && val) val = String(val).slice(0, 10);
-            return renderField(f, val);
-        }).join('');
-
-        const overlay = openModal({
-            title: (isEdit ? 'Редакция на дейност' : 'Нова дейност'),
-            body: '<form id="activityForm" class="form-grid" autocomplete="off">' +
-                    fieldsHTML +
-                    '<div class="form-group span-2">' +
-                        '<label>Презентации и файлове</label>' +
-                        '<label class="upload-zone" for="activityFileInput">' +
-                            '<span class="upload-zone-icon">&#128206;</span>' +
-                            '<span class="upload-zone-title">Избери файлове за качване</span>' +
-                            '<span class="upload-zone-hint">PDF, PowerPoint, Word, изображения · до ' +
-                                window.MHM_STORE.formatBytes(window.MHM_STORE.maxFileBytes) + ' на файл</span>' +
-                        '</label>' +
-                        '<input type="file" id="activityFileInput" multiple hidden>' +
-                        '<div class="file-rows" id="activityFileRows"></div>' +
-                        '<span class="field-hint">Файловете се качват при натискане на „Запази“.</span>' +
-                    '</div>' +
-                    '<div class="form-error" id="activityError" hidden></div>' +
-                  '</form>',
-            footer: '<button type="button" class="btn btn-outline" data-close="1">Отказ</button>' +
-                    '<button type="button" class="btn btn-primary" id="saveActivityBtn">' +
-                    (isEdit ? 'Запази промените' : 'Създай') + '</button>'
-        });
-
-        const form = overlay.querySelector('#activityForm');
-        const errorBox = overlay.querySelector('#activityError');
-        const saveBtn = overlay.querySelector('#saveActivityBtn');
-        const input = overlay.querySelector('#activityFileInput');
-        const rows = overlay.querySelector('#activityFileRows');
-
-        function renderFileRows() {
-            const parts = [];
-
-            existingFiles.forEach(function (f, i) {
-                parts.push('<div class="file-row">' +
-                    '<span class="file-row-icon">&#128196;</span>' +
-                    '<span class="file-row-name">' + esc(f.name || 'файл') + '</span>' +
-                    '<span class="file-row-size">' + esc(window.MHM_STORE.formatBytes(f.size)) + '</span>' +
-                    '<button type="button" class="icon-btn danger" data-remove-existing="' + i + '" title="Премахни">&#128465;</button>' +
-                    '</div>');
-            });
-
-            stagedFiles.forEach(function (f, i) {
-                parts.push('<div class="file-row pending">' +
-                    '<span class="file-row-icon">&#9203;</span>' +
-                    '<span class="file-row-name">' + esc(f.name) + '</span>' +
-                    '<span class="file-row-size">' + esc(window.MHM_STORE.formatBytes(f.size)) + ' · нов</span>' +
-                    '<button type="button" class="icon-btn danger" data-remove-staged="' + i + '" title="Премахни">&#10005;</button>' +
-                    '</div>');
-            });
-
-            rows.innerHTML = parts.length
-                ? parts.join('')
-                : '<span class="file-empty">Няма прикачени файлове.</span>';
-
-            rows.querySelectorAll('[data-remove-existing]').forEach(function (btn) {
-                btn.addEventListener('click', function () {
-                    const idx = Number(btn.dataset.removeExisting);
-                    const removed = existingFiles.splice(idx, 1)[0];
-                    if (removed) removedFiles.push(removed);
-                    renderFileRows();
-                });
-            });
-            rows.querySelectorAll('[data-remove-staged]').forEach(function (btn) {
-                btn.addEventListener('click', function () {
-                    stagedFiles.splice(Number(btn.dataset.removeStaged), 1);
-                    renderFileRows();
-                });
-            });
-        }
-
-        renderFileRows();
-
-        input.addEventListener('change', function () {
-            const max = window.MHM_STORE.maxFileBytes;
-            const rejected = [];
-            Array.prototype.forEach.call(input.files, function (file) {
-                if (file.size > max) {
-                    rejected.push('„' + file.name + '“ (' + window.MHM_STORE.formatBytes(file.size) + ')');
-                    return;
-                }
-                stagedFiles.push(file);
-            });
-            input.value = '';
-            renderFileRows();
-
-            if (rejected.length) {
-                errorBox.hidden = false;
-                errorBox.textContent = 'Тези файлове са над ' + window.MHM_STORE.formatBytes(max) +
-                    ' и не са добавени: ' + rejected.join(', ');
-            } else {
-                errorBox.hidden = true;
-            }
-        });
-
-        saveBtn.addEventListener('click', async function () {
-            errorBox.hidden = true;
-            const originalText = saveBtn.textContent;
-
-            let data;
-            try {
-                data = collectForm(form, schema.fields, 'activities', isEdit);
-            } catch (err) {
-                errorBox.hidden = false;
-                errorBox.textContent = err.message || 'Проверете полетата.';
-                return;
-            }
-
-            saveBtn.disabled = true;
-
-            try {
-                for (let i = 0; i < removedFiles.length; i++) {
-                    if (removedFiles[i] && removedFiles[i].id) {
-                        await window.MHM_STORE.deleteActivityFile(removedFiles[i].id);
-                    }
-                }
-
-                data.files = existingFiles.slice();
-                for (let i = 0; i < stagedFiles.length; i++) {
-                    saveBtn.textContent = stagedFiles.length > 1
-                        ? 'Качване ' + (i + 1) + '/' + stagedFiles.length + '…'
-                        : 'Качване…';
-                    const meta = await window.MHM_STORE.uploadActivityFile(stagedFiles[i]);
-                    data.files.push(meta);
-                }
-
-                if (!data.files.length) delete data.files;
-                if (!data.emoji) data.emoji = '🎭';
-
-                saveBtn.textContent = 'Запазване…';
-                if (isEdit) {
-                    await saveEntity('activities', item.id, data);
-                    toast('Промените са запазени.');
-                } else {
-                    await createEntity('activities', data);
-                    toast('Дейността е създадена.');
-                }
-
-                closeModal();
-                await refreshPanel();
-            } catch (err) {
-                errorBox.hidden = false;
-                errorBox.textContent = err && err.message ? err.message : 'Възникна грешка при запазването.';
-                saveBtn.disabled = false;
-                saveBtn.textContent = originalText;
-            }
-        });
-    }
-
-    // ============================================
     // CRUD
     // ============================================
     async function createEntity(collection, data) {
@@ -643,12 +459,7 @@
         );
         if (!ok) return;
         try {
-            if (collection === 'activities') {
-                const item = (state.data.activities || []).find(function (i) { return i.id === id; });
-                await window.MHM_STORE.deleteActivity(id, item ? item.files : []);
-            } else {
-                await window.MHM_STORE.deleteItem(collection, id);
-            }
+            await window.MHM_STORE.deleteItem(collection, id);
             toast('Изтрито успешно.');
             await refreshPanel();
         } catch (err) {
@@ -680,7 +491,7 @@
         const S = window.MHM_STORE;
         const results = await Promise.all([
             S.getArtists(), S.getSingles(), S.getEvents(), S.getNews(), S.getMessages(),
-            S.getAcademySettings(), S.getAcademyCourses(), S.getAcademyPlans(), S.getActivities()
+            S.getAcademySettings(), S.getAcademyCourses(), S.getAcademyPlans()
         ]);
         state.data.artists = results[0] || [];
         state.data.singles = results[1] || [];
@@ -690,7 +501,6 @@
         state.data.academySettings = results[5] || {};
         state.data.academyCourses = results[6] || [];
         state.data.academyPlans = results[7] || [];
-        state.data.activities = results[8] || [];
 
         if (isAdmin()) {
             try {
@@ -723,7 +533,6 @@
         singles: 'Сингли',
         events: 'Събития',
         news: 'Новини',
-        activities: 'Извънкласни дейности',
         messages: 'Съобщения',
         users: 'Потребители',
         account: 'Моят профил',
@@ -754,7 +563,6 @@
             case 'singles': renderList('singles'); break;
             case 'events': renderList('events'); break;
             case 'news': renderList('news'); break;
-            case 'activities': renderList('activities'); break;
             case 'messages': renderMessages(); break;
             case 'users': renderUsers(); break;
             case 'account': renderAccount(); break;
@@ -787,7 +595,6 @@
                 statCard('🎵', d.singles.length, 'Сингли') +
                 statCard('🎪', d.events.length, 'Събития') +
                 statCard('📰', d.news.length, 'Новини') +
-                statCard('🎉', d.activities.length, 'Дейности') +
                 statCard('🎓', d.academyCourses.length, 'Дисциплини') +
                 statCard('✉️', unread, 'Непрочетени') +
             '</div>' +
@@ -849,18 +656,6 @@
                 { label: '', render: function (i) { return '<span class="cell-emoji">' + esc(i.emoji || '📰') + '</span>'; } },
                 { label: 'Заглавие', render: function (i) { return '<span class="cell-title">' + esc(truncate(i.title, 60)) + '</span>'; } },
                 { label: 'Дата', render: function (i) { return '<span class="cell-muted">' + esc(i.date || '—') + '</span>'; } }
-            ]
-        },
-        activities: {
-            columns: [
-                { label: '', render: function (i) { return '<span class="cell-emoji">' + esc(i.emoji || '🎭') + '</span>'; } },
-                { label: 'Дейност', render: function (i) { return '<span class="cell-title">' + esc(truncate(i.title, 55)) + '</span>'; } },
-                { label: 'Организатор', render: function (i) { return esc(truncate(i.organizer || '—', 40)); }, hideMobile: true },
-                { label: 'Дата', render: function (i) { return '<span class="cell-muted">' + esc(i.date || '—') + '</span>'; }, hideMobile: true },
-                { label: 'Файлове', render: function (i) {
-                    const n = Array.isArray(i.files) ? i.files.length : 0;
-                    return '<span class="cell-muted">' + (n ? '📎 ' + n : '—') + '</span>';
-                } }
             ]
         },
         academyCourses: {
